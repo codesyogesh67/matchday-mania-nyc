@@ -9,38 +9,148 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as StandingsRouteImport } from './routes/standings'
+import { Route as ScheduleRouteImport } from './routes/schedule'
+import { Route as LeagueRouteImport } from './routes/league'
+import { Route as BarsRouteImport } from './routes/bars'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as TeamsIndexRouteImport } from './routes/teams.index'
+import { Route as TeamsTeamIdRouteImport } from './routes/teams.$teamId'
 
+const StandingsRoute = StandingsRouteImport.update({
+  id: '/standings',
+  path: '/standings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduleRoute = ScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LeagueRoute = LeagueRouteImport.update({
+  id: '/league',
+  path: '/league',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BarsRoute = BarsRouteImport.update({
+  id: '/bars',
+  path: '/bars',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const TeamsIndexRoute = TeamsIndexRouteImport.update({
+  id: '/teams/',
+  path: '/teams/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TeamsTeamIdRoute = TeamsTeamIdRouteImport.update({
+  id: '/teams/$teamId',
+  path: '/teams/$teamId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/bars': typeof BarsRoute
+  '/league': typeof LeagueRoute
+  '/schedule': typeof ScheduleRoute
+  '/standings': typeof StandingsRoute
+  '/teams/$teamId': typeof TeamsTeamIdRoute
+  '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/bars': typeof BarsRoute
+  '/league': typeof LeagueRoute
+  '/schedule': typeof ScheduleRoute
+  '/standings': typeof StandingsRoute
+  '/teams/$teamId': typeof TeamsTeamIdRoute
+  '/teams': typeof TeamsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/bars': typeof BarsRoute
+  '/league': typeof LeagueRoute
+  '/schedule': typeof ScheduleRoute
+  '/standings': typeof StandingsRoute
+  '/teams/$teamId': typeof TeamsTeamIdRoute
+  '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/bars'
+    | '/league'
+    | '/schedule'
+    | '/standings'
+    | '/teams/$teamId'
+    | '/teams/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/bars'
+    | '/league'
+    | '/schedule'
+    | '/standings'
+    | '/teams/$teamId'
+    | '/teams'
+  id:
+    | '__root__'
+    | '/'
+    | '/bars'
+    | '/league'
+    | '/schedule'
+    | '/standings'
+    | '/teams/$teamId'
+    | '/teams/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BarsRoute: typeof BarsRoute
+  LeagueRoute: typeof LeagueRoute
+  ScheduleRoute: typeof ScheduleRoute
+  StandingsRoute: typeof StandingsRoute
+  TeamsTeamIdRoute: typeof TeamsTeamIdRoute
+  TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/standings': {
+      id: '/standings'
+      path: '/standings'
+      fullPath: '/standings'
+      preLoaderRoute: typeof StandingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule': {
+      id: '/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof ScheduleRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/league': {
+      id: '/league'
+      path: '/league'
+      fullPath: '/league'
+      preLoaderRoute: typeof LeagueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bars': {
+      id: '/bars'
+      path: '/bars'
+      fullPath: '/bars'
+      preLoaderRoute: typeof BarsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,22 +158,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/teams/': {
+      id: '/teams/'
+      path: '/teams'
+      fullPath: '/teams/'
+      preLoaderRoute: typeof TeamsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/teams/$teamId': {
+      id: '/teams/$teamId'
+      path: '/teams/$teamId'
+      fullPath: '/teams/$teamId'
+      preLoaderRoute: typeof TeamsTeamIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BarsRoute: BarsRoute,
+  LeagueRoute: LeagueRoute,
+  ScheduleRoute: ScheduleRoute,
+  StandingsRoute: StandingsRoute,
+  TeamsTeamIdRoute: TeamsTeamIdRoute,
+  TeamsIndexRoute: TeamsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
