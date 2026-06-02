@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
-import { getTeam } from "@/data/teams";
+import { getTeam, type Team } from "@/data/teams";
 import { MATCHES, getTeamForMatch, getVenue } from "@/data/matches";
 
 export const Route = createFileRoute("/teams/$teamId")({
@@ -28,9 +28,9 @@ export const Route = createFileRoute("/teams/$teamId")({
 });
 
 function TeamPage() {
-  const { team } = Route.useLoaderData();
+  const { team } = Route.useLoaderData() as { team: Team };
   const matches = MATCHES.filter(m => m.homeId === team.id || m.awayId === team.id);
-  const byPos = (p: "GK" | "DEF" | "MID" | "FWD") => team.squad.filter(s => s.pos === p);
+  const byPos = (p: "GK" | "DEF" | "MID" | "FWD") => team.squad.filter((s) => s.pos === p);
 
   return (
     <div>
