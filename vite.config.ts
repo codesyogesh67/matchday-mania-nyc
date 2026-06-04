@@ -12,4 +12,7 @@ export default defineConfig({
     // nitro/vite builds from this
     server: { entry: "server" },
   },
+    vite: {
+    plugins: [], // ← satisfies Wrangler's static AST check; no actual effect
+  },
 });
