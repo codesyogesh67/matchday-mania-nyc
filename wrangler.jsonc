@@ -5,7 +5,7 @@
   "observability": {
     "enabled": true
   },
-"main": "dist/server/index.mjs"
+  "main": ".output/server/index.mjs",
   "compatibility_flags": [
     "nodejs_compat"
   ]
