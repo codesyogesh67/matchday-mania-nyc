@@ -9,14 +9,21 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WorldcupRouteImport } from './routes/worldcup'
 import { Route as StandingsRouteImport } from './routes/standings'
 import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as LeagueRouteImport } from './routes/league'
+import { Route as KnicksRouteImport } from './routes/knicks'
 import { Route as BarsRouteImport } from './routes/bars'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as TeamsIndexRouteImport } from './routes/teams.index'
 import { Route as TeamsTeamIdRouteImport } from './routes/teams.$teamId'
 
+const WorldcupRoute = WorldcupRouteImport.update({
+  id: '/worldcup',
+  path: '/worldcup',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StandingsRoute = StandingsRouteImport.update({
   id: '/standings',
   path: '/standings',
@@ -30,6 +37,11 @@ const ScheduleRoute = ScheduleRouteImport.update({
 const LeagueRoute = LeagueRouteImport.update({
   id: '/league',
   path: '/league',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const KnicksRoute = KnicksRouteImport.update({
+  id: '/knicks',
+  path: '/knicks',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BarsRoute = BarsRouteImport.update({
@@ -56,18 +68,22 @@ const TeamsTeamIdRoute = TeamsTeamIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
+  '/knicks': typeof KnicksRoute
   '/league': typeof LeagueRoute
   '/schedule': typeof ScheduleRoute
   '/standings': typeof StandingsRoute
+  '/worldcup': typeof WorldcupRoute
   '/teams/$teamId': typeof TeamsTeamIdRoute
   '/teams/': typeof TeamsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
+  '/knicks': typeof KnicksRoute
   '/league': typeof LeagueRoute
   '/schedule': typeof ScheduleRoute
   '/standings': typeof StandingsRoute
+  '/worldcup': typeof WorldcupRoute
   '/teams/$teamId': typeof TeamsTeamIdRoute
   '/teams': typeof TeamsIndexRoute
 }
@@ -75,9 +91,11 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/bars': typeof BarsRoute
+  '/knicks': typeof KnicksRoute
   '/league': typeof LeagueRoute
   '/schedule': typeof ScheduleRoute
   '/standings': typeof StandingsRoute
+  '/worldcup': typeof WorldcupRoute
   '/teams/$teamId': typeof TeamsTeamIdRoute
   '/teams/': typeof TeamsIndexRoute
 }
@@ -86,27 +104,33 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/bars'
+    | '/knicks'
     | '/league'
     | '/schedule'
     | '/standings'
+    | '/worldcup'
     | '/teams/$teamId'
     | '/teams/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/bars'
+    | '/knicks'
     | '/league'
     | '/schedule'
     | '/standings'
+    | '/worldcup'
     | '/teams/$teamId'
     | '/teams'
   id:
     | '__root__'
     | '/'
     | '/bars'
+    | '/knicks'
     | '/league'
     | '/schedule'
     | '/standings'
+    | '/worldcup'
     | '/teams/$teamId'
     | '/teams/'
   fileRoutesById: FileRoutesById
@@ -114,15 +138,24 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   BarsRoute: typeof BarsRoute
+  KnicksRoute: typeof KnicksRoute
   LeagueRoute: typeof LeagueRoute
   ScheduleRoute: typeof ScheduleRoute
   StandingsRoute: typeof StandingsRoute
+  WorldcupRoute: typeof WorldcupRoute
   TeamsTeamIdRoute: typeof TeamsTeamIdRoute
   TeamsIndexRoute: typeof TeamsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/worldcup': {
+      id: '/worldcup'
+      path: '/worldcup'
+      fullPath: '/worldcup'
+      preLoaderRoute: typeof WorldcupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/standings': {
       id: '/standings'
       path: '/standings'
@@ -142,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/league'
       fullPath: '/league'
       preLoaderRoute: typeof LeagueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/knicks': {
+      id: '/knicks'
+      path: '/knicks'
+      fullPath: '/knicks'
+      preLoaderRoute: typeof KnicksRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bars': {
@@ -178,9 +218,11 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   BarsRoute: BarsRoute,
+  KnicksRoute: KnicksRoute,
   LeagueRoute: LeagueRoute,
   ScheduleRoute: ScheduleRoute,
   StandingsRoute: StandingsRoute,
+  WorldcupRoute: WorldcupRoute,
   TeamsTeamIdRoute: TeamsTeamIdRoute,
   TeamsIndexRoute: TeamsIndexRoute,
 }
