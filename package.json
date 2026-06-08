@@ -3,11 +3,11 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
-  "scripts": {
-  "dev": "vinxi dev",
-  "build": "vinxi build",
-  "build:dev": "vinxi build --mode development",
-  "preview": "vinxi preview",
+ "scripts": {
+  "dev": "bunx vinxi dev",
+  "build": "bunx vinxi build",
+  "build:dev": "bunx vinxi build --mode development",
+  "preview": "bunx vinxi preview",
   "lint": "eslint .",
   "format": "prettier --write ."
 },
