@@ -2,11 +2,10 @@
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "matchday-mania-nyc",
   "compatibility_date": "2026-06-04",
-  "observability": {
-    "enabled": true
-  },
-  "main": ".output/server/index.mjs",
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+  "compatibility_flags": ["nodejs_compat"],
+  "main": "dist/server/server.js",
+  "assets": {
+    "directory": "dist/client",
+    "binding": "ASSETS"
+  }
 }
