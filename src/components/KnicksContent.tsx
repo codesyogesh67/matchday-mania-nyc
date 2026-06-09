@@ -28,8 +28,8 @@ export function KnicksContent() {
 }
 
 function Countdown() {
-  // Tonight 8:30 PM EDT June 8, 2026 (EDT = UTC-4)
-  const target = new Date("2026-06-09T00:30:00Z").getTime();
+  // Wednesday June 10, 8:30 PM EDT (EDT = UTC-4) → 2026-06-11T00:30:00Z
+  const target = new Date("2026-06-11T00:30:00Z").getTime();
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -88,7 +88,7 @@ function KnicksHero() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
           className="font-display mt-6 text-[14vw] md:text-[8.5rem] leading-[0.85] tracking-tight"
         >
-          IT'S GAME NIGHT,
+          BOUNCE BACK TIME,
           <br />
           <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 40px ${KNICKS_ORANGE}90` }}>NEW YORK</span> 🏀
         </motion.h1>
@@ -97,7 +97,7 @@ function KnicksHero() {
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
           className="mt-5 font-display text-xl md:text-3xl tracking-[0.2em] text-white/90"
         >
-          NBA FINALS · GAME 3 · <span style={{ color: KNICKS_BLUE, textShadow: `0 0 20px ${KNICKS_BLUE}` }}>KNICKS</span> vs SPURS
+          NBA FINALS · GAME 4 · <span style={{ color: KNICKS_BLUE, textShadow: `0 0 20px ${KNICKS_BLUE}` }}>NEW YORK KNICKS</span> vs SPURS
         </motion.p>
 
         {/* Series + win prob */}
@@ -108,13 +108,13 @@ function KnicksHero() {
           <div className="rounded-lg border border-white/15 bg-black/60 px-5 py-3 font-display text-2xl tracking-widest">
             <span style={{ color: KNICKS_ORANGE }}>NYK 2</span>
             <span className="mx-2 text-white/40">–</span>
-            <span className="text-white/70">SAS 0</span>
+            <span className="text-white/70">SAS 1</span>
           </div>
           <div className="rounded-lg border border-white/15 bg-black/60 px-5 py-3 text-sm">
             <span className="uppercase tracking-widest text-white/60 mr-2">Win Prob</span>
-            <span style={{ color: KNICKS_ORANGE }} className="font-bold">Knicks 54.2%</span>
+            <span style={{ color: KNICKS_ORANGE }} className="font-bold">Knicks 52.7%</span>
             <span className="mx-2 text-white/40">|</span>
-            <span className="text-white/70">Spurs 45.8%</span>
+            <span className="text-white/70">Spurs 47.3%</span>
           </div>
         </motion.div>
 
@@ -157,15 +157,16 @@ function GameInfo() {
 
       <div className="mt-10 grid md:grid-cols-2 gap-4">
         <InfoCard label="Venue" value="Madison Square Garden" sub="New York City" />
-        <InfoCard label="Tipoff" value="8:30 PM EDT" sub="Monday, June 8" />
-        <InfoCard label="Series" value="NBA Finals — Game 3" sub="NYK leads 2-0" />
+        <InfoCard label="Tipoff" value="8:30 PM EDT" sub="Wednesday, June 10" />
+        <InfoCard label="Series" value="NBA Finals — Game 4" sub="NYK leads 2-1" />
         <InfoCard label="Broadcast" value="ABC / ESPN" sub="National TV" />
       </div>
 
       <h3 className="mt-14 font-display text-3xl md:text-4xl tracking-wide text-center">SERIES SO FAR</h3>
-      <div className="mt-6 grid md:grid-cols-2 gap-4">
-        <RecapCard game="Game 1" result="NYK 105 – SAS 95" note="Brunson 32 pts. NYC takes the opener." />
-        <RecapCard game="Game 2" result="NYK 105 – SAS 104" note="OG Anunoby buzzer-beater. Garden erupts." />
+      <div className="mt-6 grid md:grid-cols-3 gap-4">
+        <RecapCard game="Game 1 — Final" result="NYK 105 – SAS 95" note="Brunson 32 pts. NYC takes the opener in San Antonio." won />
+        <RecapCard game="Game 2 — Final" result="NYK 105 – SAS 104" note="OG Anunoby buzzer-beater. Garden erupts in San Antonio." won />
+        <RecapCard game="Game 3 — Final" result="SAS 115 – NYK 111" note="Spurs steal one at the Garden. Series now 2-1." won={false} />
       </div>
     </section>
   );
@@ -182,12 +183,15 @@ function InfoCard({ label, value, sub }: { label: string; value: string; sub: st
   );
 }
 
-function RecapCard({ game, result, note }: { game: string; result: string; note: string }) {
+function RecapCard({ game, result, note, won }: { game: string; result: string; note: string; won: boolean }) {
   return (
     <div className="rounded-lg border border-white/10 bg-black/40 p-5">
       <div className="flex items-center justify-between">
         <span className="text-xs uppercase tracking-widest text-white/50">{game}</span>
-        <span className="text-xs px-2 py-0.5 rounded-full font-bold" style={{ background: `${KNICKS_ORANGE}20`, color: KNICKS_ORANGE }}>W</span>
+        <span className="text-xs px-2 py-0.5 rounded-full font-bold"
+          style={{ background: won ? `${KNICKS_ORANGE}20` : `${KNICKS_BLUE}20`, color: won ? KNICKS_ORANGE : "#fff" }}>
+          {won ? "W" : "L"}
+        </span>
       </div>
       <p className="font-display text-3xl mt-2" style={{ color: KNICKS_BLUE }}>{result}</p>
       <p className="text-sm text-white/70 mt-2">{note}</p>
@@ -300,7 +304,7 @@ function RunSoFar() {
     { round: "Round 1", opp: "Atlanta Hawks", result: "Won 4-2", icon: "✅" },
     { round: "Round 2", opp: "Philadelphia 76ers", result: "Swept 4-0", icon: "✅" },
     { round: "ECF", opp: "Cleveland Cavaliers", result: "Swept 4-0", icon: "✅" },
-    { round: "NBA Finals", opp: "San Antonio Spurs", result: "Leading 2-0", icon: "🔥" },
+    { round: "NBA Finals", opp: "San Antonio Spurs", result: "Leading 2-1", icon: "🔥" },
   ];
   return (
     <section className="mx-auto max-w-5xl px-4 py-16 md:py-20">
@@ -354,7 +358,7 @@ function HypeSection() {
         >
           NYC IS <span style={{ color: KNICKS_ORANGE }}>READY</span>
         </motion.h2>
-        <p className="mt-4 text-white/70 uppercase tracking-[0.3em] text-sm">The Garden. Tonight. 8:30.</p>
+        <p className="mt-4 text-white/70 uppercase tracking-[0.3em] text-sm">The Garden. Wednesday. 8:30.</p>
       </div>
 
       <div className="mt-10 overflow-hidden whitespace-nowrap">

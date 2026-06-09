@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useLocation } from "@tanstack/react-router";
 import { useState } from "react";
 
 type Theme = "default" | "knicks";
@@ -6,16 +6,25 @@ type Theme = "default" | "knicks";
 export function NavBar({ theme = "default" }: { theme?: Theme }) {
   const [open, setOpen] = useState(false);
   const isKnicks = theme === "knicks";
+  const location = useLocation();
+  const currentPath = location.pathname;
+  const isKnicksPage = currentPath === "/knicks";
+  const isWorldCupPage = currentPath === "/worldcup";
 
-  const links: { to: string; label: string; soon?: boolean; knicks?: boolean }[] = [
-    { to: "/", label: "Home" },
-    { to: "/knicks", label: "🏀 Knicks Finals", knicks: true },
+  const links: { to: string; label: string; soon?: boolean; knicks?: boolean }[] = [];
+  if (!isKnicksPage) {
+    links.push({ to: "/knicks", label: "🏀 Knicks Finals", knicks: true });
+  }
+  if (!isWorldCupPage) {
+    links.push({ to: "/worldcup", label: "⚽ World Cup" });
+  }
+  links.push(
     { to: "/schedule", label: "Schedule" },
     { to: "/standings", label: "Standings" },
     { to: "/teams", label: "Teams" },
     { to: "/bars", label: "Bars" },
     { to: "/league", label: "Prediction League", soon: true },
-  ];
+  );
 
   const headerCls = isKnicks
     ? "sticky top-0 z-50 border-b border-white/10 backdrop-blur-xl bg-black/80"
@@ -27,7 +36,7 @@ export function NavBar({ theme = "default" }: { theme?: Theme }) {
   return (
     <header className={headerCls}>
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3">
-        <Link to="/" className={`flex items-center gap-2 font-display text-2xl tracking-wider ${brand}`}>
+        <Link to="/knicks" className={`flex items-center gap-2 font-display text-2xl tracking-wider ${brand}`}>
           <span className="text-2xl">⚽</span>
           <span>
             MATCHDAY{" "}
