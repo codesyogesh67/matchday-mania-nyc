@@ -7,9 +7,9 @@ export type GameDayEvent = {
 
 export const gameDayEvents: GameDayEvent[] = [
   {
-    date: "2026-06-08",
+    date: "2026-06-10",
     route: "/knicks",
-    label: "🏀 Knicks Finals Game 3",
+    label: "🏀 Knicks Finals Game 4",
     active: true,
   },
 ];
