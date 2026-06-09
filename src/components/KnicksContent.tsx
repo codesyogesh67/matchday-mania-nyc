@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useServerFn } from "@tanstack/react-start";
-import { searchKnicksBars, type AiBar } from "@/lib/knicks-bars.functions";
 
 const KNICKS_BLUE = "#006BB6";
 const KNICKS_ORANGE = "#F58426";
 
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1546519638-68e109498ffc?w=1200",
+  "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1200",
+  "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=1200",
+];
+
 const FEATURED_BARS = [
-  { name: "Stout NYC", neighborhood: "Midtown West", vibe: ["Knicks Bar", "Big Screen", "Rowdy"] },
-  { name: "Legends Bar & Grill", neighborhood: "Midtown", vibe: ["Sports Bar", "Multi-Screen"] },
-  { name: "Brother Jimmy's BBQ", neighborhood: "Murray Hill", vibe: ["Rowdy", "Wings & Beer"] },
-  { name: "The Ainsworth", neighborhood: "Chelsea", vibe: ["Upscale", "Knicks Bar"] },
-  { name: "Standings Bar", neighborhood: "East Village", vibe: ["Tiny", "Hardcore Fans"] },
-  { name: "Nevada Smiths", neighborhood: "East Village", vibe: ["Football & Hoops", "International"] },
+  { name: "Stout NYC", address: "215 W 35th St, New York, NY 10001", neighborhood: "Near MSG", rating: 4.3, phone: "(212) 629-6191", vibe: ["Knicks Bar", "Big Screen", "Rowdy"] },
+  { name: "Legends Bar & Grill", address: "6 W 33rd St, New York, NY 10001", neighborhood: "Near MSG", rating: 4.2, phone: "(212) 967-7792", vibe: ["Sports Bar", "Multi-Screen"] },
+  { name: "The Ainsworth Midtown", address: "45 E 33rd St, New York, NY 10016", neighborhood: "Midtown", rating: 3.9, phone: "(212) 518-7598", vibe: ["Upscale", "Knicks Bar"] },
+  { name: "Standings Bar", address: "43 E 7th St, New York, NY 10003", neighborhood: "East Village", rating: 4.6, phone: "(212) 420-0671", vibe: ["Tiny", "Hardcore Fans"] },
+  { name: "Nevada Smiths", address: "100 3rd Ave, New York, NY 10003", neighborhood: "East Village", rating: 3.9, phone: "(917) 402-1510", vibe: ["Football & Hoops", "International"] },
+  { name: "Brother Jimmy's BBQ", address: "428 3rd Ave, New York, NY 10016", neighborhood: "Murray Hill", rating: 4.1, phone: "(212) 213-0228", vibe: ["Rowdy", "Wings & Beer"] },
 ];
 
 export function KnicksContent() {
@@ -57,10 +61,36 @@ function Countdown() {
   );
 }
 
+function HeroSlideshow() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIdx(i => (i + 1) % HERO_IMAGES.length), 5000);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="absolute inset-0">
+      {HERO_IMAGES.map((src, i) => (
+        <div
+          key={src}
+          className="absolute inset-0 transition-opacity duration-1000"
+          style={{
+            opacity: i === idx ? 1 : 0,
+            backgroundImage: `url(${src})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        />
+      ))}
+      <div className="absolute inset-0 bg-black/60" />
+    </div>
+  );
+}
+
 function KnicksHero() {
   return (
     <section className="relative overflow-hidden">
-      {/* Animated gradient background */}
+      <HeroSlideshow />
+      {/* Animated gradient overlay */}
       <div aria-hidden className="absolute inset-0 opacity-40"
         style={{
           background: `radial-gradient(circle at 20% 20%, ${KNICKS_BLUE}80, transparent 50%), radial-gradient(circle at 80% 80%, ${KNICKS_ORANGE}60, transparent 50%)`,
@@ -200,25 +230,19 @@ function RecapCard({ game, result, note, won }: { game: string; result: string; 
 }
 
 function WatchInNYC() {
-  const search = useServerFn(searchKnicksBars);
   const [query, setQuery] = useState("");
-  const [bars, setBars] = useState<AiBar[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [filterText, setFilterText] = useState("");
 
-  async function run(q: string) {
-    setLoading(true); setError(null);
-    try {
-      const res = await search({ data: { query: q || undefined } });
-      setBars(res.bars);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load bars");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => { run(""); /* eslint-disable-next-line */ }, []);
+  const filtered = FEATURED_BARS.filter(b => {
+    if (!filterText.trim()) return true;
+    const q = filterText.toLowerCase();
+    return (
+      b.name.toLowerCase().includes(q) ||
+      b.neighborhood.toLowerCase().includes(q) ||
+      b.address.toLowerCase().includes(q) ||
+      b.vibe.some(v => v.toLowerCase().includes(q))
+    );
+  });
 
   return (
     <section id="watch" className="mx-auto max-w-7xl px-4 py-16 md:py-20">
@@ -226,42 +250,34 @@ function WatchInNYC() {
         🍺 CATCH THE GAME <span style={{ color: KNICKS_ORANGE }}>IN NYC</span>
       </h2>
       <p className="text-center text-white/60 mt-3 max-w-2xl mx-auto">
-        Featured Knicks bars + AI-curated watch spots across the five boroughs.
+        Featured Knicks bars + watch spots across the five boroughs.
       </p>
-
-      {/* Featured */}
-      <h3 className="mt-10 font-display text-2xl tracking-widest text-white/80">⭐ FEATURED KNICKS BARS</h3>
-      <div className="mt-4 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {FEATURED_BARS.map(b => <BarCard key={b.name} bar={b} featured />)}
-      </div>
 
       {/* Search */}
       <form
-        onSubmit={(e) => { e.preventDefault(); run(query); }}
-        className="mt-12 flex flex-col sm:flex-row gap-2"
+        onSubmit={(e) => { e.preventDefault(); setFilterText(query); }}
+        className="mt-10 flex flex-col sm:flex-row gap-2"
       >
         <input
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search for bars or areas in NYC…"
+          onChange={(e) => { setQuery(e.target.value); setFilterText(e.target.value); }}
+          placeholder="Search by name, neighborhood, or vibe…"
           className="flex-1 rounded-md border border-white/15 bg-black/60 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/40"
         />
         <button type="submit"
           className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
           style={{ background: KNICKS_BLUE, boxShadow: `0 0 20px ${KNICKS_BLUE}80` }}>
-          {loading ? "Searching…" : "Search"}
+          Search
         </button>
       </form>
 
-      {error && <p className="mt-4 text-sm text-red-400">{error}</p>}
-
-      <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
-        {loading && bars.length === 0 && Array.from({ length: 6 }).map((_, i) => (
-          <div key={i} className="rounded-lg border border-white/10 bg-white/[0.03] p-5 animate-pulse h-32" />
+      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+        {filtered.map(b => (
+          <BarCard key={b.name} bar={b} featured />
         ))}
-        {bars.map((b, i) => (
-          <BarCard key={`${b.name}-${i}`} bar={{ name: b.name, neighborhood: b.neighborhood, vibe: b.vibe, note: b.note }} />
-        ))}
+        {filtered.length === 0 && (
+          <p className="text-sm text-white/50 col-span-full text-center">No bars match your search.</p>
+        )}
       </div>
     </section>
   );
@@ -271,7 +287,15 @@ function BarCard({
   bar,
   featured = false,
 }: {
-  bar: { name: string; neighborhood: string; vibe: string[]; note?: string };
+  bar: {
+    name: string;
+    address: string;
+    neighborhood: string;
+    rating: number;
+    phone: string;
+    vibe: string[];
+    note?: string;
+  };
   featured?: boolean;
 }) {
   return (
@@ -287,7 +311,12 @@ function BarCard({
         <h4 className="font-display text-2xl tracking-wide">{bar.name}</h4>
         {featured && <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full" style={{ background: KNICKS_ORANGE, color: "#000" }}>Featured</span>}
       </div>
-      <p className="text-sm text-white/70 mt-1">📍 {bar.neighborhood}</p>
+      <p className="text-sm text-white/70 mt-1">📍 {bar.address}</p>
+      <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-white/60">
+        <span className="px-2 py-0.5 rounded-full border border-white/10">{bar.neighborhood}</span>
+        <span className="px-2 py-0.5 rounded-full border border-white/10">⭐ {bar.rating}</span>
+        <span className="px-2 py-0.5 rounded-full border border-white/10">📞 {bar.phone}</span>
+      </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         {bar.vibe.map(v => (
           <span key={v} className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-full border"
