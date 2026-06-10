@@ -269,18 +269,22 @@ function RecapCard({ game, result, note, won }: { game: string; result: string; 
 
 function WatchInNYC() {
   const [query, setQuery] = useState("");
-  const [filterText, setFilterText] = useState("");
+  const [borough, setBorough] = useState<"All" | Borough>("All");
 
   const filtered = FEATURED_BARS.filter(b => {
-    if (!filterText.trim()) return true;
-    const q = filterText.toLowerCase();
+    if (borough !== "All" && b.borough !== borough) return false;
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
     return (
       b.name.toLowerCase().includes(q) ||
       b.neighborhood.toLowerCase().includes(q) ||
+      b.borough.toLowerCase().includes(q) ||
       b.address.toLowerCase().includes(q) ||
-      b.vibe.some(v => v.toLowerCase().includes(q))
+      b.tags.some(v => v.toLowerCase().includes(q))
     );
   });
+
+  const boroughs: Array<"All" | Borough> = ["All", ...BOROUGH_ORDER];
 
   return (
     <section id="watch" className="mx-auto max-w-7xl px-4 py-16 md:py-20">
@@ -288,30 +292,45 @@ function WatchInNYC() {
         🍺 CATCH THE GAME <span style={{ color: KNICKS_ORANGE }}>IN NYC</span>
       </h2>
       <p className="text-center text-white/60 mt-3 max-w-2xl mx-auto">
-        Featured Knicks bars + watch spots across the five boroughs.
+        23 bars across the five boroughs showing Game 4 tonight.
       </p>
 
       {/* Search */}
-      <form
-        onSubmit={(e) => { e.preventDefault(); setFilterText(query); }}
-        className="mt-10 flex flex-col sm:flex-row gap-2"
-      >
+      <div className="mt-10 flex flex-col sm:flex-row gap-2">
         <input
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setFilterText(e.target.value); }}
-          placeholder="Search by name, neighborhood, or vibe…"
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by name, neighborhood, borough, or tag…"
           className="flex-1 rounded-md border border-white/15 bg-black/60 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/40"
         />
-        <button type="submit"
-          className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
-          style={{ background: KNICKS_BLUE, boxShadow: `0 0 20px ${KNICKS_BLUE}80` }}>
-          Search
-        </button>
-      </form>
+      </div>
 
-      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {/* Borough filter */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {boroughs.map(b => {
+          const active = borough === b;
+          return (
+            <button
+              key={b}
+              onClick={() => setBorough(b)}
+              className="rounded-full px-4 py-1.5 text-xs uppercase tracking-widest font-bold border transition"
+              style={{
+                borderColor: active ? KNICKS_ORANGE : "rgba(255,255,255,0.15)",
+                background: active ? KNICKS_ORANGE : "transparent",
+                color: active ? "#000" : "rgba(255,255,255,0.8)",
+                boxShadow: active ? `0 0 16px ${KNICKS_ORANGE}80` : undefined,
+              }}
+            >
+              {b}
+            </button>
+          );
+        })}
+        <span className="ml-auto text-xs text-white/50 self-center">{filtered.length} bar{filtered.length === 1 ? "" : "s"}</span>
+      </div>
+
+      <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {filtered.map(b => (
-          <BarCard key={b.name} bar={b} featured />
+          <BarCard key={b.name} bar={b} />
         ))}
         {filtered.length === 0 && (
           <p className="text-sm text-white/50 col-span-full text-center">No bars match your search.</p>
@@ -321,21 +340,8 @@ function WatchInNYC() {
   );
 }
 
-function BarCard({
-  bar,
-  featured = false,
-}: {
-  bar: {
-    name: string;
-    address: string;
-    neighborhood: string;
-    rating: number;
-    phone: string;
-    vibe: string[];
-    note?: string;
-  };
-  featured?: boolean;
-}) {
+function BarCard({ bar }: { bar: KnicksBar }) {
+  const featured = !!bar.hot;
   return (
     <motion.div
       whileHover={{ y: -3 }}
@@ -347,21 +353,32 @@ function BarCard({
     >
       <div className="flex items-start justify-between gap-2">
         <h4 className="font-display text-2xl tracking-wide">{bar.name}</h4>
-        {featured && <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full" style={{ background: KNICKS_ORANGE, color: "#000" }}>Featured</span>}
+        {bar.hot && (
+          <span
+            className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full whitespace-nowrap animate-pulse"
+            style={{ background: KNICKS_ORANGE, color: "#000" }}
+          >
+            🔥 Hot tonight
+          </span>
+        )}
       </div>
       <p className="text-sm text-white/70 mt-1">📍 {bar.address}</p>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-white/60">
         <span className="px-2 py-0.5 rounded-full border border-white/10">{bar.neighborhood}</span>
-        <span className="px-2 py-0.5 rounded-full border border-white/10">⭐ {bar.rating}</span>
-        <span className="px-2 py-0.5 rounded-full border border-white/10">📞 {bar.phone}</span>
+        <span className="px-2 py-0.5 rounded-full border border-white/10">{bar.borough}</span>
+        <span
+          className="px-2 py-0.5 rounded-full border font-bold"
+          style={{ borderColor: `${KNICKS_ORANGE}80`, color: KNICKS_ORANGE }}
+        >
+          ★ {bar.rating.toFixed(1)}
+        </span>
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {bar.vibe.map(v => (
+        {bar.tags.map(v => (
           <span key={v} className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-full border"
             style={{ borderColor: `${KNICKS_BLUE}80`, color: KNICKS_BLUE }}>{v}</span>
         ))}
       </div>
-      {bar.note && <p className="text-xs text-white/50 mt-3 line-clamp-2">{bar.note}</p>}
     </motion.div>
   );
 }
