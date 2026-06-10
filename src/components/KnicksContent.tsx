@@ -10,14 +10,52 @@ const HERO_IMAGES = [
   "https://images.unsplash.com/photo-1504450758481-7338eba7524a?w=1200",
 ];
 
-const FEATURED_BARS = [
-  { name: "Stout NYC", address: "215 W 35th St, New York, NY 10001", neighborhood: "Near MSG", rating: 4.3, phone: "(212) 629-6191", vibe: ["Knicks Bar", "Big Screen", "Rowdy"] },
-  { name: "Legends Bar & Grill", address: "6 W 33rd St, New York, NY 10001", neighborhood: "Near MSG", rating: 4.2, phone: "(212) 967-7792", vibe: ["Sports Bar", "Multi-Screen"] },
-  { name: "The Ainsworth Midtown", address: "45 E 33rd St, New York, NY 10016", neighborhood: "Midtown", rating: 3.9, phone: "(212) 518-7598", vibe: ["Upscale", "Knicks Bar"] },
-  { name: "Standings Bar", address: "43 E 7th St, New York, NY 10003", neighborhood: "East Village", rating: 4.6, phone: "(212) 420-0671", vibe: ["Tiny", "Hardcore Fans"] },
-  { name: "Nevada Smiths", address: "100 3rd Ave, New York, NY 10003", neighborhood: "East Village", rating: 3.9, phone: "(917) 402-1510", vibe: ["Football & Hoops", "International"] },
-  { name: "Brother Jimmy's BBQ", address: "428 3rd Ave, New York, NY 10016", neighborhood: "Murray Hill", rating: 4.1, phone: "(212) 213-0228", vibe: ["Rowdy", "Wings & Beer"] },
-];
+type Borough = "Manhattan" | "Brooklyn" | "Queens" | "Bronx";
+type KnicksBar = {
+  name: string;
+  address: string;
+  neighborhood: string;
+  borough: Borough;
+  rating: number;
+  tags: string[];
+  hot?: boolean;
+};
+
+const BOROUGH_ORDER: Borough[] = ["Manhattan", "Brooklyn", "Queens", "Bronx"];
+
+const FEATURED_BARS: KnicksBar[] = ([
+  // Manhattan
+  { name: "Mustang Harry's", address: "352 7th Ave, Midtown", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.4, tags: ["Official Knicks Bar", "20+ TVs", "Surround Sound"], hot: true },
+  { name: "Magic Hour Rooftop", address: "485 7th Ave (Moxy Hotel), Midtown", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.5, tags: ["Rooftop", "8 Big Screens", "Retractable Roof"], hot: true },
+  { name: "Virgil's Real BBQ", address: "152 W 44th St, Times Square", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.3, tags: ["Full BBQ Menu", "Watch Party", "Times Sq"] },
+  { name: "Stout NYC", address: "215 W 35th St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.3, tags: ["Epic TV Setup", "Rowdy", "Near MSG"] },
+  { name: "Legends Bar", address: "6 W 33rd St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.2, tags: ["3 Floors", "Classic", "Near MSG"] },
+  { name: "Goldie's Tavern", address: "135 W 30th St", neighborhood: "Chelsea", borough: "Manhattan" as const, rating: 4.1, tags: ["Official Knicks Bar", "Chill Vibe"] },
+  { name: "Crompton Ale House", address: "159 W 26th St", neighborhood: "Chelsea", borough: "Manhattan" as const, rating: 4.0, tags: ["Ale House", "Multiple Screens"] },
+  { name: "The Ainsworth", address: "45 E 33rd St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 3.9, tags: ["Rooftop", "Lively", "Great Food"] },
+  { name: "Amity Hall", address: "80 W 3rd St", neighborhood: "West Village", borough: "Manhattan" as const, rating: 4.2, tags: ["Official Knicks Bar", "Downtown", "Chill"] },
+  { name: "Hurley's Saloon", address: "232 W 48th St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.1, tags: ["Official Knicks Bar", "Classic NYC Bar"] },
+  { name: "Harlem Tavern", address: "2153 Frederick Douglass Blvd", neighborhood: "Harlem", borough: "Manhattan" as const, rating: 4.3, tags: ["Official Knicks Bar", "Beer Garden", "Uptown"] },
+  { name: "Standings Bar", address: "43 E 7th St", neighborhood: "East Village", borough: "Manhattan" as const, rating: 4.6, tags: ["Old NY Feel", "Intimate", "Highest Rated"] },
+  { name: "Nevada Smiths", address: "100 3rd Ave", neighborhood: "East Village", borough: "Manhattan" as const, rating: 3.9, tags: ["3 Floors", "Global Sports Vibe"] },
+  // Brooklyn
+  { name: "FancyFree", address: "175 DeKalb Ave", neighborhood: "Fort Greene", borough: "Brooklyn" as const, rating: 4.5, tags: ["Laid Back", "Cocktails", "Local Fave"], hot: true },
+  { name: "The Dram Shop", address: "339 9th St", neighborhood: "Park Slope", borough: "Brooklyn" as const, rating: 4.6, tags: ["2026 Best Brooklyn Bar", "7 TVs", "Projector"], hot: true },
+  { name: "Time Out Market", address: "55 Water St", neighborhood: "DUMBO", borough: "Brooklyn" as const, rating: 4.3, tags: ["2 Floors", "Food Hall", "Cocktails"] },
+  { name: "Black Forest Brooklyn", address: "733 Flatbush Ave", neighborhood: "Flatbush", borough: "Brooklyn" as const, rating: 4.2, tags: ["Beer Hall", "Projection Screens", "Patio"] },
+  { name: "Baker's Bar", address: "1 Cornelia St", neighborhood: "Carroll Gardens", borough: "Brooklyn" as const, rating: 4.1, tags: ["Local Spot", "Multiple Screens", "Cozy"] },
+  { name: "Brooklyn Bowl", address: "61 Wythe Ave", neighborhood: "Williamsburg", borough: "Brooklyn" as const, rating: 4.4, tags: ["Bowling + Hoops", "Huge Space", "Full Bar"] },
+  { name: "Brooklyn Crab", address: "24 Reed St", neighborhood: "Red Hook", borough: "Brooklyn" as const, rating: 4.0, tags: ["Big Screen", "Waterfront", "Seafood"] },
+  // Queens
+  { name: "Pig Beach Astoria", address: "33-02 Vernon Blvd", neighborhood: "Astoria", borough: "Queens" as const, rating: 4.7, tags: ["28ft Jumbotron", "65 TVs", "Outdoor BBQ"], hot: true },
+  { name: "One Station Plaza", address: "21310 41st Ave", neighborhood: "Bayside", borough: "Queens" as const, rating: 4.0, tags: ["Official Knicks Bar", "Local Spot"] },
+  // Bronx
+  { name: "Rambling House", address: "4292 Katonah Ave", neighborhood: "Woodlawn", borough: "Bronx" as const, rating: 4.1, tags: ["Official Knicks Bar", "Irish Pub", "Bronx Staple"] },
+] satisfies KnicksBar[]).slice().sort((a, b) => {
+  const bo = BOROUGH_ORDER.indexOf(a.borough) - BOROUGH_ORDER.indexOf(b.borough);
+  if (bo !== 0) return bo;
+  return b.rating - a.rating;
+});
 
 export function KnicksContent() {
   return (
@@ -231,18 +269,22 @@ function RecapCard({ game, result, note, won }: { game: string; result: string; 
 
 function WatchInNYC() {
   const [query, setQuery] = useState("");
-  const [filterText, setFilterText] = useState("");
+  const [borough, setBorough] = useState<"All" | Borough>("All");
 
   const filtered = FEATURED_BARS.filter(b => {
-    if (!filterText.trim()) return true;
-    const q = filterText.toLowerCase();
+    if (borough !== "All" && b.borough !== borough) return false;
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
     return (
       b.name.toLowerCase().includes(q) ||
       b.neighborhood.toLowerCase().includes(q) ||
+      b.borough.toLowerCase().includes(q) ||
       b.address.toLowerCase().includes(q) ||
-      b.vibe.some(v => v.toLowerCase().includes(q))
+      b.tags.some(v => v.toLowerCase().includes(q))
     );
   });
+
+  const boroughs: Array<"All" | Borough> = ["All", ...BOROUGH_ORDER];
 
   return (
     <section id="watch" className="mx-auto max-w-7xl px-4 py-16 md:py-20">
@@ -250,30 +292,45 @@ function WatchInNYC() {
         🍺 CATCH THE GAME <span style={{ color: KNICKS_ORANGE }}>IN NYC</span>
       </h2>
       <p className="text-center text-white/60 mt-3 max-w-2xl mx-auto">
-        Featured Knicks bars + watch spots across the five boroughs.
+        23 bars across the five boroughs showing Game 4 tonight.
       </p>
 
       {/* Search */}
-      <form
-        onSubmit={(e) => { e.preventDefault(); setFilterText(query); }}
-        className="mt-10 flex flex-col sm:flex-row gap-2"
-      >
+      <div className="mt-10 flex flex-col sm:flex-row gap-2">
         <input
           value={query}
-          onChange={(e) => { setQuery(e.target.value); setFilterText(e.target.value); }}
-          placeholder="Search by name, neighborhood, or vibe…"
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search by name, neighborhood, borough, or tag…"
           className="flex-1 rounded-md border border-white/15 bg-black/60 px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-white/40"
         />
-        <button type="submit"
-          className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
-          style={{ background: KNICKS_BLUE, boxShadow: `0 0 20px ${KNICKS_BLUE}80` }}>
-          Search
-        </button>
-      </form>
+      </div>
 
-      <div className="mt-8 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+      {/* Borough filter */}
+      <div className="mt-4 flex flex-wrap gap-2">
+        {boroughs.map(b => {
+          const active = borough === b;
+          return (
+            <button
+              key={b}
+              onClick={() => setBorough(b)}
+              className="rounded-full px-4 py-1.5 text-xs uppercase tracking-widest font-bold border transition"
+              style={{
+                borderColor: active ? KNICKS_ORANGE : "rgba(255,255,255,0.15)",
+                background: active ? KNICKS_ORANGE : "transparent",
+                color: active ? "#000" : "rgba(255,255,255,0.8)",
+                boxShadow: active ? `0 0 16px ${KNICKS_ORANGE}80` : undefined,
+              }}
+            >
+              {b}
+            </button>
+          );
+        })}
+        <span className="ml-auto text-xs text-white/50 self-center">{filtered.length} bar{filtered.length === 1 ? "" : "s"}</span>
+      </div>
+
+      <div className="mt-6 grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {filtered.map(b => (
-          <BarCard key={b.name} bar={b} featured />
+          <BarCard key={b.name} bar={b} />
         ))}
         {filtered.length === 0 && (
           <p className="text-sm text-white/50 col-span-full text-center">No bars match your search.</p>
@@ -283,21 +340,8 @@ function WatchInNYC() {
   );
 }
 
-function BarCard({
-  bar,
-  featured = false,
-}: {
-  bar: {
-    name: string;
-    address: string;
-    neighborhood: string;
-    rating: number;
-    phone: string;
-    vibe: string[];
-    note?: string;
-  };
-  featured?: boolean;
-}) {
+function BarCard({ bar }: { bar: KnicksBar }) {
+  const featured = !!bar.hot;
   return (
     <motion.div
       whileHover={{ y: -3 }}
@@ -309,21 +353,32 @@ function BarCard({
     >
       <div className="flex items-start justify-between gap-2">
         <h4 className="font-display text-2xl tracking-wide">{bar.name}</h4>
-        {featured && <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full" style={{ background: KNICKS_ORANGE, color: "#000" }}>Featured</span>}
+        {bar.hot && (
+          <span
+            className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full whitespace-nowrap animate-pulse"
+            style={{ background: KNICKS_ORANGE, color: "#000" }}
+          >
+            🔥 Hot tonight
+          </span>
+        )}
       </div>
       <p className="text-sm text-white/70 mt-1">📍 {bar.address}</p>
       <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-white/60">
         <span className="px-2 py-0.5 rounded-full border border-white/10">{bar.neighborhood}</span>
-        <span className="px-2 py-0.5 rounded-full border border-white/10">⭐ {bar.rating}</span>
-        <span className="px-2 py-0.5 rounded-full border border-white/10">📞 {bar.phone}</span>
+        <span className="px-2 py-0.5 rounded-full border border-white/10">{bar.borough}</span>
+        <span
+          className="px-2 py-0.5 rounded-full border font-bold"
+          style={{ borderColor: `${KNICKS_ORANGE}80`, color: KNICKS_ORANGE }}
+        >
+          ★ {bar.rating.toFixed(1)}
+        </span>
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
-        {bar.vibe.map(v => (
+        {bar.tags.map(v => (
           <span key={v} className="text-[11px] uppercase tracking-wider px-2 py-0.5 rounded-full border"
             style={{ borderColor: `${KNICKS_BLUE}80`, color: KNICKS_BLUE }}>{v}</span>
         ))}
       </div>
-      {bar.note && <p className="text-xs text-white/50 mt-3 line-clamp-2">{bar.note}</p>}
     </motion.div>
   );
 }
