@@ -19,9 +19,7 @@ export function NavBar({ theme = "default" }: { theme?: Theme }) {
     links.push({ to: "/worldcup", label: "⚽ World Cup" });
   }
   links.push(
-    { to: "/schedule", label: "Schedule" },
-    { to: "/standings", label: "Standings" },
-    { to: "/teams", label: "Teams" },
+
     { to: "/bars", label: "Bars" },
     { to: "/league", label: "Prediction League", soon: true },
   );
