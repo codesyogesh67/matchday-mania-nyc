@@ -23,35 +23,35 @@ type KnicksBar = {
 
 const BOROUGH_ORDER: Borough[] = ["Manhattan", "Brooklyn", "Queens", "Bronx"];
 
-const FEATURED_BARS: KnicksBar[] = [
+const FEATURED_BARS: KnicksBar[] = ([
   // Manhattan
-  { name: "Mustang Harry's", address: "352 7th Ave, Midtown", neighborhood: "Midtown", borough: "Manhattan", rating: 4.4, tags: ["Official Knicks Bar", "20+ TVs", "Surround Sound"], hot: true },
-  { name: "Magic Hour Rooftop", address: "485 7th Ave (Moxy Hotel), Midtown", neighborhood: "Midtown", borough: "Manhattan", rating: 4.5, tags: ["Rooftop", "8 Big Screens", "Retractable Roof"], hot: true },
-  { name: "Virgil's Real BBQ", address: "152 W 44th St, Times Square", neighborhood: "Midtown", borough: "Manhattan", rating: 4.3, tags: ["Full BBQ Menu", "Watch Party", "Times Sq"] },
-  { name: "Stout NYC", address: "215 W 35th St", neighborhood: "Midtown", borough: "Manhattan", rating: 4.3, tags: ["Epic TV Setup", "Rowdy", "Near MSG"] },
-  { name: "Legends Bar", address: "6 W 33rd St", neighborhood: "Midtown", borough: "Manhattan", rating: 4.2, tags: ["3 Floors", "Classic", "Near MSG"] },
-  { name: "Goldie's Tavern", address: "135 W 30th St", neighborhood: "Chelsea", borough: "Manhattan", rating: 4.1, tags: ["Official Knicks Bar", "Chill Vibe"] },
-  { name: "Crompton Ale House", address: "159 W 26th St", neighborhood: "Chelsea", borough: "Manhattan", rating: 4.0, tags: ["Ale House", "Multiple Screens"] },
-  { name: "The Ainsworth", address: "45 E 33rd St", neighborhood: "Midtown", borough: "Manhattan", rating: 3.9, tags: ["Rooftop", "Lively", "Great Food"] },
-  { name: "Amity Hall", address: "80 W 3rd St", neighborhood: "West Village", borough: "Manhattan", rating: 4.2, tags: ["Official Knicks Bar", "Downtown", "Chill"] },
-  { name: "Hurley's Saloon", address: "232 W 48th St", neighborhood: "Midtown", borough: "Manhattan", rating: 4.1, tags: ["Official Knicks Bar", "Classic NYC Bar"] },
-  { name: "Harlem Tavern", address: "2153 Frederick Douglass Blvd", neighborhood: "Harlem", borough: "Manhattan", rating: 4.3, tags: ["Official Knicks Bar", "Beer Garden", "Uptown"] },
-  { name: "Standings Bar", address: "43 E 7th St", neighborhood: "East Village", borough: "Manhattan", rating: 4.6, tags: ["Old NY Feel", "Intimate", "Highest Rated"] },
-  { name: "Nevada Smiths", address: "100 3rd Ave", neighborhood: "East Village", borough: "Manhattan", rating: 3.9, tags: ["3 Floors", "Global Sports Vibe"] },
+  { name: "Mustang Harry's", address: "352 7th Ave, Midtown", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.4, tags: ["Official Knicks Bar", "20+ TVs", "Surround Sound"], hot: true },
+  { name: "Magic Hour Rooftop", address: "485 7th Ave (Moxy Hotel), Midtown", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.5, tags: ["Rooftop", "8 Big Screens", "Retractable Roof"], hot: true },
+  { name: "Virgil's Real BBQ", address: "152 W 44th St, Times Square", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.3, tags: ["Full BBQ Menu", "Watch Party", "Times Sq"] },
+  { name: "Stout NYC", address: "215 W 35th St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.3, tags: ["Epic TV Setup", "Rowdy", "Near MSG"] },
+  { name: "Legends Bar", address: "6 W 33rd St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.2, tags: ["3 Floors", "Classic", "Near MSG"] },
+  { name: "Goldie's Tavern", address: "135 W 30th St", neighborhood: "Chelsea", borough: "Manhattan" as const, rating: 4.1, tags: ["Official Knicks Bar", "Chill Vibe"] },
+  { name: "Crompton Ale House", address: "159 W 26th St", neighborhood: "Chelsea", borough: "Manhattan" as const, rating: 4.0, tags: ["Ale House", "Multiple Screens"] },
+  { name: "The Ainsworth", address: "45 E 33rd St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 3.9, tags: ["Rooftop", "Lively", "Great Food"] },
+  { name: "Amity Hall", address: "80 W 3rd St", neighborhood: "West Village", borough: "Manhattan" as const, rating: 4.2, tags: ["Official Knicks Bar", "Downtown", "Chill"] },
+  { name: "Hurley's Saloon", address: "232 W 48th St", neighborhood: "Midtown", borough: "Manhattan" as const, rating: 4.1, tags: ["Official Knicks Bar", "Classic NYC Bar"] },
+  { name: "Harlem Tavern", address: "2153 Frederick Douglass Blvd", neighborhood: "Harlem", borough: "Manhattan" as const, rating: 4.3, tags: ["Official Knicks Bar", "Beer Garden", "Uptown"] },
+  { name: "Standings Bar", address: "43 E 7th St", neighborhood: "East Village", borough: "Manhattan" as const, rating: 4.6, tags: ["Old NY Feel", "Intimate", "Highest Rated"] },
+  { name: "Nevada Smiths", address: "100 3rd Ave", neighborhood: "East Village", borough: "Manhattan" as const, rating: 3.9, tags: ["3 Floors", "Global Sports Vibe"] },
   // Brooklyn
-  { name: "FancyFree", address: "175 DeKalb Ave", neighborhood: "Fort Greene", borough: "Brooklyn", rating: 4.5, tags: ["Laid Back", "Cocktails", "Local Fave"], hot: true },
-  { name: "The Dram Shop", address: "339 9th St", neighborhood: "Park Slope", borough: "Brooklyn", rating: 4.6, tags: ["2026 Best Brooklyn Bar", "7 TVs", "Projector"], hot: true },
-  { name: "Time Out Market", address: "55 Water St", neighborhood: "DUMBO", borough: "Brooklyn", rating: 4.3, tags: ["2 Floors", "Food Hall", "Cocktails"] },
-  { name: "Black Forest Brooklyn", address: "733 Flatbush Ave", neighborhood: "Flatbush", borough: "Brooklyn", rating: 4.2, tags: ["Beer Hall", "Projection Screens", "Patio"] },
-  { name: "Baker's Bar", address: "1 Cornelia St", neighborhood: "Carroll Gardens", borough: "Brooklyn", rating: 4.1, tags: ["Local Spot", "Multiple Screens", "Cozy"] },
-  { name: "Brooklyn Bowl", address: "61 Wythe Ave", neighborhood: "Williamsburg", borough: "Brooklyn", rating: 4.4, tags: ["Bowling + Hoops", "Huge Space", "Full Bar"] },
-  { name: "Brooklyn Crab", address: "24 Reed St", neighborhood: "Red Hook", borough: "Brooklyn", rating: 4.0, tags: ["Big Screen", "Waterfront", "Seafood"] },
+  { name: "FancyFree", address: "175 DeKalb Ave", neighborhood: "Fort Greene", borough: "Brooklyn" as const, rating: 4.5, tags: ["Laid Back", "Cocktails", "Local Fave"], hot: true },
+  { name: "The Dram Shop", address: "339 9th St", neighborhood: "Park Slope", borough: "Brooklyn" as const, rating: 4.6, tags: ["2026 Best Brooklyn Bar", "7 TVs", "Projector"], hot: true },
+  { name: "Time Out Market", address: "55 Water St", neighborhood: "DUMBO", borough: "Brooklyn" as const, rating: 4.3, tags: ["2 Floors", "Food Hall", "Cocktails"] },
+  { name: "Black Forest Brooklyn", address: "733 Flatbush Ave", neighborhood: "Flatbush", borough: "Brooklyn" as const, rating: 4.2, tags: ["Beer Hall", "Projection Screens", "Patio"] },
+  { name: "Baker's Bar", address: "1 Cornelia St", neighborhood: "Carroll Gardens", borough: "Brooklyn" as const, rating: 4.1, tags: ["Local Spot", "Multiple Screens", "Cozy"] },
+  { name: "Brooklyn Bowl", address: "61 Wythe Ave", neighborhood: "Williamsburg", borough: "Brooklyn" as const, rating: 4.4, tags: ["Bowling + Hoops", "Huge Space", "Full Bar"] },
+  { name: "Brooklyn Crab", address: "24 Reed St", neighborhood: "Red Hook", borough: "Brooklyn" as const, rating: 4.0, tags: ["Big Screen", "Waterfront", "Seafood"] },
   // Queens
-  { name: "Pig Beach Astoria", address: "33-02 Vernon Blvd", neighborhood: "Astoria", borough: "Queens", rating: 4.7, tags: ["28ft Jumbotron", "65 TVs", "Outdoor BBQ"], hot: true },
-  { name: "One Station Plaza", address: "21310 41st Ave", neighborhood: "Bayside", borough: "Queens", rating: 4.0, tags: ["Official Knicks Bar", "Local Spot"] },
+  { name: "Pig Beach Astoria", address: "33-02 Vernon Blvd", neighborhood: "Astoria", borough: "Queens" as const, rating: 4.7, tags: ["28ft Jumbotron", "65 TVs", "Outdoor BBQ"], hot: true },
+  { name: "One Station Plaza", address: "21310 41st Ave", neighborhood: "Bayside", borough: "Queens" as const, rating: 4.0, tags: ["Official Knicks Bar", "Local Spot"] },
   // Bronx
-  { name: "Rambling House", address: "4292 Katonah Ave", neighborhood: "Woodlawn", borough: "Bronx", rating: 4.1, tags: ["Official Knicks Bar", "Irish Pub", "Bronx Staple"] },
-].sort((a, b) => {
+  { name: "Rambling House", address: "4292 Katonah Ave", neighborhood: "Woodlawn", borough: "Bronx" as const, rating: 4.1, tags: ["Official Knicks Bar", "Irish Pub", "Bronx Staple"] },
+] satisfies KnicksBar[]).slice().sort((a, b) => {
   const bo = BOROUGH_ORDER.indexOf(a.borough) - BOROUGH_ORDER.indexOf(b.borough);
   if (bo !== 0) return bo;
   return b.rating - a.rating;
