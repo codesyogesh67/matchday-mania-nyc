@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
+import { CallToReserveButton } from "@/components/CallToReserve";
 import { BARS, type Vibe, type Borough } from "@/data/bars";
 import { TEAMS } from "@/data/teams";
 
