@@ -515,7 +515,7 @@ function RunSoFar() {
     { round: "Round 1", opp: "Atlanta Hawks", result: "Won 4-2", icon: "✅" },
     { round: "Round 2", opp: "Philadelphia 76ers", result: "Swept 4-0", icon: "✅" },
     { round: "ECF", opp: "Cleveland Cavaliers", result: "Swept 4-0", icon: "✅" },
-    { round: "NBA Finals", opp: "San Antonio Spurs", result: "Leading 2-1", icon: "🔥" },
+    { round: "NBA Finals", opp: "San Antonio Spurs", result: "Leading 3-1 — One Win Away", icon: "🏆" },
   ];
   return (
     <section className="mx-auto max-w-5xl px-4 py-16 md:py-20">
