@@ -7,6 +7,7 @@ export const VENUES: Record<string, { name: string; city: string; country: strin
   hardrock: { name: "Hard Rock Stadium", city: "Miami Gardens, FL", country: "USA" },
   lincoln: { name: "Lincoln Financial Field", city: "Philadelphia, PA", country: "USA" },
   gillette: { name: "Gillette Stadium", city: "Foxborough, MA", country: "USA" },
+  nrg: { name: "NRG Stadium", city: "Houston, TX", country: "USA" },
   arrowhead: { name: "Arrowhead Stadium", city: "Kansas City, MO", country: "USA" },
   lumen: { name: "Lumen Field", city: "Seattle, WA", country: "USA" },
   bcplace: { name: "BC Place", city: "Vancouver, BC", country: "Canada" },
