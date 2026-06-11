@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
+import { CallToReserveButton } from "@/components/CallToReserve";
 import { BARS, type Vibe, type Borough } from "@/data/bars";
 import { TEAMS } from "@/data/teams";
 
@@ -64,25 +65,32 @@ function BarsPage() {
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {bars.map(bar => (
-            <div key={bar.id} className="card-glow rounded-lg border border-border bg-card p-5">
-              <h3 className="font-display text-2xl tracking-wide">{bar.name}</h3>
-              <p className="text-xs text-muted-foreground mt-1">{bar.neighborhood} · {bar.borough} · {bar.distance}</p>
+            <div key={bar.id} className="card-glow rounded-lg border border-border bg-card p-5 relative">
+              {bar.hot && (
+                <span className="absolute top-3 right-3 rounded-full bg-orange-500/20 border border-orange-400/60 text-orange-300 text-[10px] font-bold px-2 py-0.5 uppercase tracking-widest">🔥 Hot tonight</span>
+              )}
+              <h3 className="font-display text-2xl tracking-wide pr-20">{bar.name}</h3>
+              <p className="text-xs text-muted-foreground mt-1">{bar.address}</p>
               <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
+                <span className="rounded-full bg-secondary px-2 py-0.5">{bar.neighborhood} · {bar.borough}</span>
                 <span className="rounded-full bg-secondary px-2 py-0.5">{vibeIcon[bar.vibe]} {bar.vibe}</span>
                 <span className="rounded-full bg-secondary px-2 py-0.5">{bar.price}</span>
                 <span className="text-[var(--gold)]">{"★".repeat(Math.round(bar.rating))}<span className="text-muted-foreground">{"★".repeat(5 - Math.round(bar.rating))}</span></span>
                 <span className="text-muted-foreground">{bar.rating.toFixed(1)}</span>
               </div>
-              <div className="flex flex-wrap gap-1 mt-3">
-                {bar.supports.map(s => {
-                  const t = TEAMS.find(x => x.id === s);
-                  return <span key={s} className="text-lg" title={t?.name}>{t?.flag ?? "🏳"}</span>;
-                })}
-              </div>
+              {bar.tags && bar.tags.length > 0 && (
+                <div className="flex flex-wrap gap-1 mt-3">
+                  {bar.tags.map(t => (
+                    <span key={t} className="text-[10px] uppercase tracking-widest rounded-full border border-border px-2 py-0.5 text-foreground/70">{t}</span>
+                  ))}
+                </div>
+              )}
               <p className="mt-3 text-sm text-foreground/80">🎉 {bar.specialsTemplate}</p>
-              <button className="mt-4 w-full rounded-md bg-[var(--electric)] text-primary-foreground font-bold uppercase text-xs tracking-widest py-2.5 hover:animate-pulse-glow">
-                RSVP / Going
-              </button>
+              {bar.phone && (
+                <div className="mt-4">
+                  <CallToReserveButton name={bar.name} phone={bar.phone} accent="#C9A84C" />
+                </div>
+              )}
             </div>
           ))}
         </div>
