@@ -1,6 +1,6 @@
 export type GameDayEvent = {
   date: string; // YYYY-MM-DD (ET)
-  route: "/knicks";
+  route: "/knicks" | "/worldcup";
   label: string;
   active: boolean;
 };
@@ -8,8 +8,8 @@ export type GameDayEvent = {
 export const gameDayEvents: GameDayEvent[] = [
   {
     date: "2026-06-11",
-    route: "/knicks",
-    label: "🏀 Knicks Finals — One Win Away",
+    route: "/worldcup",
+    label: "⚽ FIFA World Cup 2026 Opening Day",
     active: true,
   },
 ];

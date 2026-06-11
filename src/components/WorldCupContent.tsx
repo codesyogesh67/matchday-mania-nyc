@@ -1,127 +1,270 @@
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { motion } from "framer-motion";
-import { Countdown } from "@/components/Countdown";
-import { MATCHES } from "@/data/matches";
+import { motion, AnimatePresence } from "framer-motion";
+import { BARS } from "@/data/bars";
+
+const WC_GOLD = "#C9A84C";
+const WC_GREEN = "#2d6a4f";
+const WC_BG = "#050a05";
+const WC_CARD = "#0d1f0d";
+
+const HERO_IMAGES = [
+  "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1400",
+  "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1400",
+  "https://images.unsplash.com/photo-1551958219-acbc27753d71?w=1400",
+  "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1400",
+  "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=1400",
+];
+
+const FLAG_MARQUEE = "🇧🇷 🇦🇷 🇫🇷 🇩🇪 🇪🇸 🇵🇹 🇬🇧 🇮🇹 🇳🇱 🇧🇪 🇲🇽 🇺🇸 🇯🇵 🇰🇷 🇸🇳 🇲🇦 🇳🇬 🇨🇲 🇬🇭 🇨🇴 🇺🇾 🇨🇷 🇨🇭 🇩🇰 🇸🇪 🇳🇴 🇵🇱 🇦🇺 🇳🇿".split(" ");
 
 export function WorldCupContent() {
-  const opener = MATCHES[0];
   return (
-    <main>
-      <Hero openerDate={opener.date} />
-      <Highlights />
+    <main style={{ background: WC_BG }} className="text-white">
+      <Hero />
+      <TodaysGames />
+      <UnitySection />
+      <WatchInNYC />
+      <TournamentTicker />
     </main>
   );
 }
 
-function Hero({ openerDate }: { openerDate: string }) {
-  return (
-    <section className="relative overflow-hidden grunge-overlay">
-      <Skyline />
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-40 h-[120%] bg-gradient-to-b from-[var(--electric)]/20 via-[var(--electric)]/5 to-transparent blur-2xl animate-beam"></div>
-        <div className="absolute top-0 left-1/2 w-32 h-[120%] bg-gradient-to-b from-[var(--gold)]/15 via-[var(--gold)]/5 to-transparent blur-2xl animate-beam" style={{ animationDelay: "2s" }}></div>
-        <div className="absolute top-0 left-2/3 w-48 h-[120%] bg-gradient-to-b from-[var(--electric)]/15 to-transparent blur-2xl animate-beam" style={{ animationDelay: "4s" }}></div>
-      </div>
-      <div className="stadium-bg absolute inset-0" />
+function Hero() {
+  const [idx, setIdx] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setIdx(i => (i + 1) % HERO_IMAGES.length), 4000);
+    return () => clearInterval(id);
+  }, []);
 
-      <div className="relative mx-auto max-w-7xl px-4 pt-16 pb-24 md:pt-24 md:pb-32 text-center">
+  return (
+    <section className="relative h-[100svh] min-h-[640px] w-full overflow-hidden">
+      <AnimatePresence>
+        <motion.div
+          key={idx}
+          initial={{ opacity: 0, scale: 1.06 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 1.6, ease: "easeInOut" }}
+          className="absolute inset-0 bg-cover bg-center"
+          style={{ backgroundImage: `url(${HERO_IMAGES[idx]})` }}
+        />
+      </AnimatePresence>
+      <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.55)" }} />
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050a05]" />
+
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center">
         <motion.p
-          initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-          className="inline-block rounded-full border border-[var(--electric)]/40 bg-[var(--electric)]/5 px-4 py-1.5 text-xs uppercase tracking-[0.3em] text-[var(--electric)]"
+          initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+          className="text-[11px] md:text-sm uppercase font-semibold"
+          style={{ color: WC_GOLD, letterSpacing: "0.4em", textShadow: `0 0 24px ${WC_GOLD}80` }}
         >
-          June 11 — July 19, 2026
+          FIFA World Cup 2026 · Opens Today
         </motion.p>
 
         <motion.h1
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.7 }}
-          className="font-display mt-6 text-[16vw] md:text-[10rem] leading-[0.85] tracking-tight"
+          initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.8 }}
+          className="font-display mt-6 text-[15vw] md:text-[9rem] leading-[0.85] tracking-tight font-black"
+          style={{ textShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
         >
-          MATCHDAY
-          <br />
-          <span className="text-[var(--electric)] text-glow-green">NYC</span>
+          THE WORLD<br />JUST LANDED<br />
+          <span style={{ color: WC_GOLD, textShadow: `0 0 60px ${WC_GOLD}90` }}>IN NEW YORK</span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4, duration: 0.6 }}
-          className="mt-4 font-display text-xl md:text-3xl tracking-[0.25em] text-foreground/80"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
+          className="mt-8 text-lg md:text-2xl text-white/85 max-w-2xl"
         >
-          WORLD CUP 2026 · <span className="text-[var(--gold)] text-glow-gold">USA · CANADA · MEXICO</span>
+          48 nations. 104 matches. One city that holds them all.
         </motion.p>
 
         <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55, duration: 0.6 }}
-          className="mt-10"
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.6 }}
+          className="mt-10 flex flex-wrap items-center justify-center gap-4"
         >
-          <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground mb-3">Kickoff in</p>
-          <Countdown target={openerDate} />
+          <a href="#today" className="rounded-md px-7 py-3.5 font-bold uppercase tracking-widest text-sm transition hover:brightness-110"
+            style={{ background: WC_GOLD, color: "#0a0a0a", boxShadow: `0 0 32px ${WC_GOLD}60` }}>
+            Today's Games
+          </a>
+          <a href="#bars" className="rounded-md border-2 border-white/80 px-7 py-3.5 font-bold uppercase tracking-widest text-sm text-white transition hover:bg-white hover:text-black">
+            Find a Bar
+          </a>
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7, duration: 0.6 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          animate={{ y: [0, 10, 0], opacity: [0.4, 1, 0.4] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="absolute bottom-8 left-1/2 -translate-x-1/2"
         >
-          <Link to="/bars" className="rounded-md bg-[var(--electric)] text-primary-foreground px-6 py-3 font-bold uppercase tracking-widest text-sm hover:animate-pulse-glow">
-            🍺 Find Your Bar
-          </Link>
-          <Link to="/league" className="rounded-md bg-[var(--gold)] text-background px-6 py-3 font-bold uppercase tracking-widest text-sm">
-            🏆 Prediction League
-          </Link>
-          <Link to="/schedule" className="rounded-md border border-foreground/30 px-6 py-3 font-bold uppercase tracking-widest text-sm hover:border-foreground">
-            📅 View Schedule
-          </Link>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+            <path d="M7 10l5 5 5-5" />
+          </svg>
         </motion.div>
       </div>
     </section>
   );
 }
 
-function Skyline() {
+type TodayMatch = {
+  group: string; home: string; homeFlag: string; away: string; awayFlag: string;
+  time: string; venue: string; broadcast: string;
+};
+const TODAY_MATCHES: TodayMatch[] = [
+  { group: "Group A", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", time: "3:00 PM ET", venue: "Estadio Azteca, Mexico City", broadcast: "FOX / Tubi (free)" },
+  { group: "Group A", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", time: "10:00 PM ET", venue: "Estadio Akron, Guadalajara, Mexico", broadcast: "FS1" },
+];
+
+function TodaysGames() {
   return (
-    <svg aria-hidden viewBox="0 0 1200 200" preserveAspectRatio="none" className="absolute bottom-0 left-0 w-full h-48 md:h-72 opacity-20 pointer-events-none">
-      <path fill="currentColor" className="text-foreground"
-        d="M0 200 L0 130 L40 130 L40 90 L80 90 L80 110 L110 110 L110 60 L140 60 L140 100 L180 100 L180 70 L210 70 L210 30 L230 30 L230 70 L260 70 L260 110 L300 110 L300 80 L340 80 L340 50 L370 50 L370 90 L410 90 L410 120 L450 120 L450 90 L490 90 L490 40 L510 40 L510 90 L540 90 L540 110 L580 110 L580 70 L620 70 L620 30 L640 30 L640 70 L670 70 L670 100 L710 100 L710 60 L750 60 L750 110 L790 110 L790 80 L830 80 L830 50 L870 50 L870 100 L910 100 L910 130 L950 130 L950 90 L990 90 L990 60 L1020 60 L1020 100 L1060 100 L1060 130 L1100 130 L1100 110 L1140 110 L1140 140 L1200 140 L1200 200 Z" />
-    </svg>
+    <section id="today" className="relative mx-auto max-w-7xl px-4 py-20 md:py-28">
+      <SectionHeader eyebrow="Kick Off Day" title="JUNE 11 · 2026" />
+      <div className="mt-12 grid gap-6 md:grid-cols-2">
+        {TODAY_MATCHES.map((m, i) => (
+          <motion.article
+            key={i}
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            transition={{ delay: i * 0.1 }}
+            className="rounded-xl overflow-hidden"
+            style={{ background: WC_CARD, border: `1px solid ${WC_GOLD}66`, boxShadow: `0 0 40px ${WC_GOLD}15` }}
+          >
+            <div className="flex items-center justify-between px-5 py-3 border-b" style={{ borderColor: `${WC_GOLD}33`, background: "rgba(0,0,0,0.3)" }}>
+              <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: WC_GOLD }}>{m.group}</span>
+              <span className="text-[11px] uppercase tracking-widest text-white/70">{m.time}</span>
+            </div>
+            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-8">
+              <div className="text-right">
+                <div className="text-5xl md:text-6xl">{m.homeFlag}</div>
+                <p className="font-display tracking-wide mt-2 text-xl md:text-2xl font-bold">{m.home}</p>
+              </div>
+              <div className="font-display text-2xl text-white/40">VS</div>
+              <div className="text-left">
+                <div className="text-5xl md:text-6xl">{m.awayFlag}</div>
+                <p className="font-display tracking-wide mt-2 text-xl md:text-2xl font-bold">{m.away}</p>
+              </div>
+            </div>
+            <div className="px-5 py-4 border-t text-sm text-white/80 space-y-1" style={{ borderColor: `${WC_GOLD}22`, background: "rgba(0,0,0,0.25)" }}>
+              <div>📍 {m.venue}</div>
+              <div>📺 <span style={{ color: WC_GOLD }}>{m.broadcast}</span></div>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+      <p className="mt-10 text-center text-sm md:text-base text-white/70 italic">
+        The Final comes home to <span style={{ color: WC_GOLD }} className="font-semibold not-italic">MetLife Stadium, New Jersey</span> · July 19, 2026
+      </p>
+    </section>
   );
 }
 
-function Highlights() {
-  const items = [
-    { label: "Total Matches", value: "104", icon: "⚽" },
-    { label: "National Teams", value: "48", icon: "🌍" },
-    { label: "Host Cities", value: "16", icon: "🏟" },
-    { label: "NYC Bars", value: "18+", icon: "🍺" },
-  ];
+function UnitySection() {
   return (
-    <section className="relative mx-auto max-w-7xl px-4 py-16 md:py-24">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6">
-        {items.map((it, i) => (
-          <motion.div key={it.label}
-            initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ delay: i * 0.08 }}
-            className="card-glow rounded-lg border border-border bg-card p-5 text-center">
-            <div className="text-3xl">{it.icon}</div>
-            <div className="font-display text-5xl text-[var(--electric)] text-glow-green mt-2">{it.value}</div>
-            <div className="text-xs uppercase tracking-widest text-muted-foreground mt-1">{it.label}</div>
-          </motion.div>
-        ))}
+    <section className="relative overflow-hidden border-y" style={{ borderColor: `${WC_GOLD}22`, background: "linear-gradient(180deg, #050a05 0%, #081208 50%, #050a05 100%)" }}>
+      <div
+        aria-hidden
+        className="absolute inset-0 opacity-[0.07]"
+        style={{
+          backgroundImage: `radial-gradient(circle at 20% 30%, ${WC_GOLD} 0, transparent 40%), radial-gradient(circle at 80% 70%, ${WC_GREEN} 0, transparent 40%)`,
+        }}
+      />
+      <div className="relative mx-auto max-w-5xl px-4 py-24 md:py-36 text-center">
+        <SectionHeader eyebrow="The Soul of It" title="ONE CITY. EVERY NATION." />
+        <motion.p
+          initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+          transition={{ duration: 0.8 }}
+          className="mt-12 text-xl md:text-3xl leading-relaxed text-white/90 font-light"
+        >
+          New York has always been where the world comes together. On any given block you'll hear a dozen languages,
+          smell food from a hundred countries, and share a subway car with someone whose flag is flying in today's match.
+          <br /><br />
+          The World Cup doesn't just visit New York — <span style={{ color: WC_GOLD }} className="font-semibold">it comes home</span>.
+          For 39 days this summer, every neighborhood becomes its own stadium. Every bar becomes an embassy. Every fan becomes family.
+        </motion.p>
       </div>
 
-      <div className="mt-16 grid md:grid-cols-3 gap-4">
-        <FeatureCard icon="📅" title="EVERY MATCH" desc="All 104 matches with ET kickoffs, real venues, and live filters." to="/schedule" />
-        <FeatureCard icon="🍺" title="THE BARS" desc="Find rowdy supporter bars across the five boroughs and beyond." to="/bars" />
-        <FeatureCard icon="🇧🇷" title="THE SQUADS" desc="All 48 teams. Real squads for the giants. Star players highlighted." to="/teams" />
+      <div className="relative border-t border-b py-6 overflow-hidden" style={{ borderColor: `${WC_GOLD}33`, background: "rgba(0,0,0,0.4)" }}>
+        <div className="flex gap-6 animate-marquee whitespace-nowrap text-4xl md:text-5xl">
+          {[...FLAG_MARQUEE, ...FLAG_MARQUEE, ...FLAG_MARQUEE].map((f, i) => (
+            <span key={i}>{f}</span>
+          ))}
+        </div>
       </div>
     </section>
   );
 }
 
-function FeatureCard({ icon, title, desc, to }: { icon: string; title: string; desc: string; to: string }) {
+function WatchInNYC() {
+  const [q, setQ] = useState("");
+  const filtered = BARS.filter(b => {
+    const s = q.trim().toLowerCase();
+    if (!s) return true;
+    return (
+      b.name.toLowerCase().includes(s) ||
+      b.neighborhood.toLowerCase().includes(s) ||
+      b.borough.toLowerCase().includes(s) ||
+      b.vibe.toLowerCase().includes(s)
+    );
+  });
+
   return (
-    <Link to={to} className="card-glow group rounded-lg border border-border bg-card p-6">
-      <div className="text-4xl">{icon}</div>
-      <h3 className="font-display text-3xl mt-3 tracking-wide">{title}</h3>
-      <p className="text-sm text-muted-foreground mt-2">{desc}</p>
-      <p className="mt-4 text-xs uppercase tracking-widest text-[var(--electric)]">Open →</p>
-    </Link>
+    <section id="bars" className="relative mx-auto max-w-7xl px-4 py-20 md:py-28">
+      <SectionHeader eyebrow="Where To Watch" title="FIND YOUR MATCH IN NYC" />
+      <p className="mt-6 text-center text-white/70">
+        Search your neighborhood — every bar is showing the World Cup tonight
+      </p>
+      <div className="mt-6 max-w-xl mx-auto">
+        <input
+          value={q}
+          onChange={e => setQ(e.target.value)}
+          placeholder="Search by name, neighborhood, borough, or vibe…"
+          className="w-full rounded-lg px-5 py-3.5 text-white placeholder-white/40 focus:outline-none focus:ring-2"
+          style={{ background: WC_CARD, border: `1px solid ${WC_GOLD}55`, boxShadow: `inset 0 0 20px ${WC_GOLD}10` }}
+        />
+      </div>
+
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {filtered.map(b => (
+          <article key={b.id} className="rounded-lg p-5" style={{ background: WC_CARD, border: `1px solid ${WC_GOLD}33` }}>
+            <div className="flex items-start justify-between gap-3">
+              <h3 className="font-display text-xl tracking-wide">{b.name}</h3>
+              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${WC_GOLD}22`, color: WC_GOLD }}>★ {b.rating}</span>
+            </div>
+            <p className="text-sm text-white/60 mt-1">{b.neighborhood} · {b.borough}</p>
+            <p className="text-xs uppercase tracking-widest mt-3" style={{ color: WC_GOLD }}>{b.vibe} · {b.price}</p>
+            <p className="text-sm text-white/75 mt-2 italic">"{b.specialsTemplate}"</p>
+          </article>
+        ))}
+      </div>
+      {filtered.length === 0 && (
+        <p className="text-center text-white/50 mt-10">No bars match that search. Try a borough or vibe.</p>
+      )}
+    </section>
   );
 }
+
+function TournamentTicker() {
+  const text = "48 TEAMS · 104 MATCHES · 16 CITIES · 3 COUNTRIES · OPENS JUNE 11 · FINAL JULY 19 AT METLIFE NJ · USA · MEXICO · CANADA · THE BIGGEST WORLD CUP IN HISTORY";
+  return (
+    <section className="relative border-t border-b py-5 overflow-hidden" style={{ borderColor: `${WC_GOLD}55`, background: "linear-gradient(90deg, #050a05, #0d1f0d, #050a05)" }}>
+      <div className="flex gap-12 animate-marquee whitespace-nowrap font-display text-2xl md:text-4xl tracking-[0.2em]" style={{ color: WC_GOLD, textShadow: `0 0 24px ${WC_GOLD}55` }}>
+        {Array.from({ length: 4 }).map((_, i) => <span key={i}>{text} ·</span>)}
+      </div>
+    </section>
+  );
+}
+
+function SectionHeader({ eyebrow, title }: { eyebrow: string; title: string }) {
+  return (
+    <div className="text-center">
+      <p className="text-[11px] md:text-xs uppercase font-semibold" style={{ color: WC_GOLD, letterSpacing: "0.4em" }}>
+        {eyebrow}
+      </p>
+      <h2 className="font-display mt-3 text-4xl md:text-6xl tracking-tight font-black">
+        {title}
+      </h2>
+      <div className="mt-4 mx-auto h-px w-24" style={{ background: `linear-gradient(90deg, transparent, ${WC_GOLD}, transparent)` }} />
+    </div>
+  );
+}
+
+// Re-export Link to silence unused-import linters during incremental builds
+export { Link };
