@@ -26,10 +26,9 @@ function Index() {
   }, []);
 
   if (!ready) {
-    // SSR / first paint: default to World Cup home to avoid flash.
     return (
-      <div>
-        <NavBar />
+      <div style={{ background: "#050a05", minHeight: "100vh" }}>
+        <NavBar theme="worldcup" />
         <WorldCupContent />
         <Footer />
       </div>
@@ -47,10 +46,11 @@ function Index() {
   }
 
   return (
-    <div>
-      <NavBar />
+    <div style={{ background: "#050a05", minHeight: "100vh" }}>
+      <NavBar theme="worldcup" />
       <WorldCupContent />
       <Footer />
     </div>
   );
 }
+
