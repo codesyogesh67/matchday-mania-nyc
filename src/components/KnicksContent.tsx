@@ -97,8 +97,8 @@ function SeriesBanner() {
 }
 
 function Countdown() {
-  // Wednesday June 10, 8:30 PM EDT (EDT = UTC-4) → 2026-06-11T00:30:00Z
-  const target = new Date("2026-06-11T00:30:00Z").getTime();
+  // Saturday June 14, 8:30 PM EDT (EDT = UTC-4) → 2026-06-15T00:30:00Z
+  const target = new Date("2026-06-15T00:30:00Z").getTime();
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
