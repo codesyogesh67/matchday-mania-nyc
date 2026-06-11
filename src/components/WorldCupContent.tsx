@@ -48,55 +48,46 @@ function Hero() {
           style={{ backgroundImage: `url(${HERO_IMAGES[idx]})` }}
         />
       </AnimatePresence>
-      <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.55)" }} />
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-[#050a05]" />
+      {/* Light dark overlay — images are already dark/detailed */}
+      <div className="absolute inset-0" style={{ background: "rgba(0,0,0,0.35)" }} />
+      {/* Bottom gradient to anchor lower-third text without obscuring image's upper visuals */}
+      <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-[#050a05] via-[#050a05]/85 to-transparent" />
 
-      <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col items-center justify-center px-4 text-center">
+      <div className="relative z-10 mx-auto flex h-full max-w-7xl flex-col justify-end px-4 pb-16 md:pb-24 text-center md:text-left">
         <motion.p
           initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
-          className="text-[11px] md:text-sm uppercase font-semibold"
-          style={{ color: WC_GOLD, letterSpacing: "0.4em", textShadow: `0 0 24px ${WC_GOLD}80` }}
+          className="text-[10px] md:text-xs uppercase font-semibold"
+          style={{ color: WC_GOLD, letterSpacing: "0.35em", textShadow: `0 0 24px ${WC_GOLD}80` }}
         >
-          FIFA World Cup 2026 · Opens Today
+          FIFA World Cup 2026 · Opens Today · June 11
         </motion.p>
 
         <motion.h1
           initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15, duration: 0.8 }}
-          className="font-display mt-6 text-[15vw] md:text-[9rem] leading-[0.85] tracking-tight font-black"
-          style={{ textShadow: "0 4px 40px rgba(0,0,0,0.6)" }}
+          className="font-display mt-4 text-[10vw] md:text-7xl lg:text-8xl leading-[0.95] tracking-tight font-black text-white max-w-5xl"
+          style={{ textShadow: "0 4px 30px rgba(0,0,0,0.7)" }}
         >
-          THE WORLD<br />JUST LANDED<br />
-          <span style={{ color: WC_GOLD, textShadow: `0 0 60px ${WC_GOLD}90` }}>IN NEW YORK</span>
+          THE WORLD JUST LANDED <span className="text-white">IN NEW YORK</span>
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
-          className="mt-8 text-lg md:text-2xl text-white/85 max-w-2xl"
+          className="mt-5 text-base md:text-xl text-white/90 max-w-2xl"
         >
           48 nations. 104 matches. One city that holds them all.
         </motion.p>
 
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.7, duration: 0.6 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-4"
+          className="mt-7 flex flex-wrap items-center justify-center md:justify-start gap-3"
         >
-          <a href="#today" className="rounded-md px-7 py-3.5 font-bold uppercase tracking-widest text-sm transition hover:brightness-110"
-            style={{ background: WC_GOLD, color: "#0a0a0a", boxShadow: `0 0 32px ${WC_GOLD}60` }}>
-            Today's Games
+          <a href="#today" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-xs md:text-sm transition hover:brightness-110"
+            style={{ background: WC_GOLD, color: "#0a0a0a", boxShadow: `0 0 28px ${WC_GOLD}55` }}>
+            Today's Matches
           </a>
-          <a href="#bars" className="rounded-md border-2 border-white/80 px-7 py-3.5 font-bold uppercase tracking-widest text-sm text-white transition hover:bg-white hover:text-black">
+          <a href="#bars" className="rounded-md border-2 border-white px-6 py-3 font-bold uppercase tracking-widest text-xs md:text-sm text-white transition hover:bg-white hover:text-black">
             Find a Bar
           </a>
-        </motion.div>
-
-        <motion.div
-          animate={{ y: [0, 10, 0], opacity: [0.4, 1, 0.4] }}
-          transition={{ duration: 2, repeat: Infinity }}
-          className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        >
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-            <path d="M7 10l5 5 5-5" />
-          </svg>
         </motion.div>
       </div>
     </section>
