@@ -88,6 +88,10 @@ function Hero() {
           <a href="#bars" className="rounded-md border-2 border-white px-6 py-3 font-bold uppercase tracking-widest text-xs md:text-sm text-white transition hover:bg-white hover:text-black">
             Find a Bar
           </a>
+          <Link to="/schedule" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-xs md:text-sm transition hover:bg-[#C9A84C] hover:text-black"
+            style={{ border: `2px solid ${WC_GOLD}`, color: WC_GOLD, background: "transparent" }}>
+            ⚽ Full Schedule
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -181,7 +185,7 @@ function UnitySection() {
   );
 }
 
-function WatchInNYC() {
+export function WatchInNYC() {
   const [q, setQ] = useState("");
   const filtered = BARS.filter(b => {
     const s = q.trim().toLowerCase();

@@ -2,100 +2,243 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
-import { MatchCard } from "@/components/MatchCard";
-import { BarsPanel } from "@/components/BarsPanel";
-import { MATCHES, getTeamForMatch, type Match } from "@/data/matches";
-import { GROUPS, TEAMS } from "@/data/teams";
-import { VENUES } from "@/data/venues";
+import { WatchInNYC } from "@/components/WorldCupContent";
 
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
-      { title: "Full Schedule — MatchDay NYC" },
-      { name: "description", content: "All 104 World Cup 2026 matches with ET kickoff times and venues." },
+      { title: "FIFA World Cup 2026 · Full Schedule — MatchDay NYC" },
+      { name: "description", content: "Every World Cup 2026 match. Dates, kickoff times, venues, broadcasts. June 11 – July 19. USA · Mexico · Canada." },
     ],
   }),
   component: SchedulePage,
 });
 
-function SchedulePage() {
-  const [group, setGroup] = useState<string>("All");
-  const [team, setTeam] = useState<string>("All");
-  const [city, setCity] = useState<string>("All");
-  const [date, setDate] = useState<string>("All");
-  const [open, setOpen] = useState<Match | null>(null);
+const WC_GOLD = "#C9A84C";
+const WC_BG = "#050a05";
+const WC_CARD = "#0d1f0d";
 
-  const dates = useMemo(() => {
-    const s = new Set<string>();
+type Stage =
+  | "Group Stage"
+  | "Round of 32"
+  | "Round of 16"
+  | "Quarterfinals"
+  | "Semifinals"
+  | "Final";
+
+type Match = {
+  stage: Stage;
+  group?: string;
+  date: string; // display date
+  time: string;
+  home: string; homeFlag: string;
+  away: string; awayFlag: string;
+  venue: string;
+  city: string;
+  broadcast: string;
+  metlife?: boolean;
+  tbd?: boolean;
+};
+
+const MATCHES: Match[] = [
+  // June 11
+  { stage: "Group Stage", group: "Group A", date: "Thu Jun 11", time: "3:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FOX / Tubi" },
+  { stage: "Group Stage", group: "Group A", date: "Thu Jun 11", time: "10:00 PM ET", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FS1" },
+  // June 12
+  { stage: "Group Stage", group: "Group B", date: "Fri Jun 12", time: "3:00 PM ET", home: "Canada", homeFlag: "🇨🇦", away: "TBD", awayFlag: "⚽", venue: "BMO Field", city: "Toronto", broadcast: "FS1", tbd: true },
+  { stage: "Group Stage", group: "Group D", date: "Fri Jun 12", time: "9:00 PM ET", home: "USA", homeFlag: "🇺🇸", away: "Paraguay", awayFlag: "🇵🇾", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FOX" },
+  // June 13
+  { stage: "Group Stage", group: "Group C", date: "Sat Jun 13", time: "3:00 PM ET", home: "Wales", homeFlag: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", away: "Saudi Arabia", awayFlag: "🇸🇦", venue: "Lumen Field", city: "Seattle", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group C", date: "Sat Jun 13", time: "6:00 PM ET", home: "Brazil", homeFlag: "🇧🇷", away: "Cameroon", awayFlag: "🇨🇲", venue: "Hard Rock Stadium", city: "Miami", broadcast: "FOX" },
+  // June 14
+  { stage: "Group Stage", group: "Group E", date: "Sun Jun 14", time: "12:00 PM ET", home: "Ivory Coast", homeFlag: "🇨🇮", away: "Ecuador", awayFlag: "🇪🇨", venue: "Lincoln Financial Field", city: "Philadelphia", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group E", date: "Sun Jun 14", time: "1:00 PM ET", home: "Germany", homeFlag: "🇩🇪", away: "Curaçao", awayFlag: "🇨🇼", venue: "NRG Stadium", city: "Houston", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group F", date: "Sun Jun 14", time: "4:00 PM ET", home: "Netherlands", homeFlag: "🇳🇱", away: "Japan", awayFlag: "🇯🇵", venue: "AT&T Stadium", city: "Arlington", broadcast: "FOX" },
+  // June 15
+  { stage: "Group Stage", group: "Group H", date: "Mon Jun 15", time: "1:00 PM ET", home: "Spain", homeFlag: "🇪🇸", away: "Cape Verde", awayFlag: "🇨🇻", venue: "Mercedes-Benz Stadium", city: "Atlanta", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group G", date: "Mon Jun 15", time: "6:00 PM ET", home: "Belgium", homeFlag: "🇧🇪", away: "Egypt", awayFlag: "🇪🇬", venue: "Lumen Field", city: "Seattle", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group H", date: "Mon Jun 15", time: "6:00 PM ET", home: "Saudi Arabia", homeFlag: "🇸🇦", away: "Uruguay", awayFlag: "🇺🇾", venue: "Hard Rock Stadium", city: "Miami", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group G", date: "Mon Jun 15", time: "12:00 AM ET", home: "Iran", homeFlag: "🇮🇷", away: "New Zealand", awayFlag: "🇳🇿", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FS1" },
+  // June 16 — METLIFE!
+  { stage: "Group Stage", group: "Group I", date: "Tue Jun 16", time: "3:00 PM ET", home: "France", homeFlag: "🇫🇷", away: "Senegal", awayFlag: "🇸🇳", venue: "MetLife Stadium", city: "East Rutherford NJ", broadcast: "FOX", metlife: true },
+  { stage: "Group Stage", group: "Group I", date: "Tue Jun 16", time: "6:00 PM ET", home: "Iraq", homeFlag: "🇮🇶", away: "Norway", awayFlag: "🇳🇴", venue: "Gillette Stadium", city: "Foxborough MA", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group J", date: "Tue Jun 16", time: "9:00 PM ET", home: "Argentina", homeFlag: "🇦🇷", away: "Algeria", awayFlag: "🇩🇿", venue: "Arrowhead Stadium", city: "Kansas City", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group J", date: "Tue Jun 16", time: "9:00 PM ET", home: "Austria", homeFlag: "🇦🇹", away: "Jordan", awayFlag: "🇯🇴", venue: "Levi's Stadium", city: "Santa Clara", broadcast: "FS1" },
+  // June 17
+  { stage: "Group Stage", group: "Group K", date: "Wed Jun 17", time: "1:00 PM ET", home: "Portugal", homeFlag: "🇵🇹", away: "DR Congo", awayFlag: "🇨🇩", venue: "NRG Stadium", city: "Houston", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group L", date: "Wed Jun 17", time: "4:00 PM ET", home: "England", homeFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", away: "Croatia", awayFlag: "🇭🇷", venue: "AT&T Stadium", city: "Arlington", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group L", date: "Wed Jun 17", time: "7:00 PM ET", home: "Ghana", homeFlag: "🇬🇭", away: "Panama", awayFlag: "🇵🇦", venue: "BMO Field", city: "Toronto", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group K", date: "Wed Jun 17", time: "10:00 PM ET", home: "Uzbekistan", homeFlag: "🇺🇿", away: "Colombia", awayFlag: "🇨🇴", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FS1" },
+  // June 18
+  { stage: "Group Stage", group: "Group A", date: "Thu Jun 18", time: "12:00 PM ET", home: "Czechia", homeFlag: "🇨🇿", away: "South Africa", awayFlag: "🇿🇦", venue: "Mercedes-Benz Stadium", city: "Atlanta", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group B", date: "Thu Jun 18", time: "3:00 PM ET", home: "Switzerland", homeFlag: "🇨🇭", away: "Bosnia & Herzegovina", awayFlag: "🇧🇦", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group B", date: "Thu Jun 18", time: "6:00 PM ET", home: "Canada", homeFlag: "🇨🇦", away: "Qatar", awayFlag: "🇶🇦", venue: "BC Place", city: "Vancouver", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group A", date: "Thu Jun 18", time: "9:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Korea", awayFlag: "🇰🇷", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FOX" },
+];
+
+const KNOCKOUT_PLACEHOLDERS: { stage: Stage; window: string; note?: string; metlife?: boolean }[] = [
+  { stage: "Round of 32", window: "June 28 – July 3", note: "Top 2 from each group + 8 best 3rd-place teams advance" },
+  { stage: "Round of 16", window: "July 4 – July 7" },
+  { stage: "Quarterfinals", window: "July 9 – July 11" },
+  { stage: "Semifinals", window: "July 14 – July 15" },
+  { stage: "Final", window: "Bronze Match July 18 · FINAL July 19", note: "FINAL at MetLife Stadium, East Rutherford NJ", metlife: true },
+];
+
+const STAGES: Stage[] = ["Group Stage", "Round of 32", "Round of 16", "Quarterfinals", "Semifinals", "Final"];
+
+function SchedulePage() {
+  const [stage, setStage] = useState<Stage>("Group Stage");
+
+  const groupMatchesByDate = useMemo(() => {
+    const map = new Map<string, Match[]>();
     MATCHES.forEach(m => {
-      const d = new Date(m.date).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/New_York" });
-      s.add(d);
+      if (!map.has(m.date)) map.set(m.date, []);
+      map.get(m.date)!.push(m);
     });
-    return Array.from(s);
+    return Array.from(map.entries());
   }, []);
 
-  const cities = useMemo(() => Array.from(new Set(Object.values(VENUES).map(v => v.city))), []);
-
-  const filtered = useMemo(() => {
-    return MATCHES.filter(m => {
-      if (group !== "All" && m.group !== group && !m.stage.includes(group)) {
-        if (group !== "Knockout" || ["Group A","Group B","Group C","Group D","Group E","Group F","Group G","Group H","Group I","Group J","Group K","Group L"].includes(m.stage)) {
-          if (group !== "Knockout") return false;
-        }
-      }
-      if (group === "Knockout" && m.stage.startsWith("Group")) return false;
-      if (team !== "All" && m.homeId !== team && m.awayId !== team) return false;
-      if (city !== "All" && VENUES[m.venue].city !== city) return false;
-      if (date !== "All") {
-        const d = new Date(m.date).toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "America/New_York" });
-        if (d !== date) return false;
-      }
-      return true;
-    });
-  }, [group, team, city, date]);
-
   return (
-    <div>
-      <NavBar />
-      <main className="mx-auto max-w-7xl px-4 py-10">
-        <header className="mb-6">
-          <p className="text-xs uppercase tracking-[0.3em] text-[var(--electric)]">The Fixtures</p>
-          <h1 className="font-display text-5xl md:text-7xl mt-1">FULL SCHEDULE</h1>
-          <p className="text-muted-foreground mt-2">104 matches. ET kickoff times. All real venues across USA · Canada · Mexico.</p>
+    <div style={{ background: WC_BG, minHeight: "100vh" }} className="text-white">
+      <NavBar theme="worldcup" />
+      <main className="mx-auto max-w-7xl px-4 py-12 md:py-16">
+        <header className="text-center mb-10">
+          <p className="text-[11px] md:text-xs uppercase font-semibold" style={{ color: WC_GOLD, letterSpacing: "0.4em" }}>
+            The Fixtures
+          </p>
+          <h1 className="font-display mt-3 text-4xl md:text-6xl tracking-tight font-black">
+            FIFA WORLD CUP 2026 · FULL SCHEDULE
+          </h1>
+          <p className="mt-4 text-white/70 text-base md:text-lg">
+            June 11 – July 19 · USA · Mexico · Canada
+          </p>
         </header>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-          <Filter label="Group / Stage" value={group} onChange={setGroup} options={["All", ...GROUPS.map(g => g), "Knockout"]} />
-          <Filter label="Team" value={team} onChange={setTeam}
-            options={["All", ...TEAMS.map(t => t.id)]}
-            labels={["All", ...TEAMS.map(t => `${t.flag} ${t.name}`)]} />
-          <Filter label="City" value={city} onChange={setCity} options={["All", ...cities]} />
-          <Filter label="Date" value={date} onChange={setDate} options={["All", ...dates]} />
+        {/* Stage tabs */}
+        <div className="flex flex-wrap justify-center gap-2 mb-12">
+          {STAGES.map(s => {
+            const active = s === stage;
+            return (
+              <button
+                key={s}
+                onClick={() => setStage(s)}
+                className="rounded-full px-4 py-2 text-xs md:text-sm font-bold uppercase tracking-widest transition"
+                style={{
+                  background: active ? WC_GOLD : "transparent",
+                  color: active ? "#0a0a0a" : WC_GOLD,
+                  border: `1.5px solid ${WC_GOLD}`,
+                  boxShadow: active ? `0 0 20px ${WC_GOLD}55` : "none",
+                }}
+              >
+                {s}
+              </button>
+            );
+          })}
         </div>
 
-        <p className="text-xs text-muted-foreground mb-4">{filtered.length} matches</p>
+        {stage === "Group Stage" ? (
+          <div className="space-y-12">
+            {groupMatchesByDate.map(([date, matches]) => (
+              <section key={date}>
+                <div className="flex items-center gap-4 mb-4">
+                  <h2 className="font-display text-2xl md:text-3xl tracking-wide" style={{ color: WC_GOLD }}>{date}</h2>
+                  <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${WC_GOLD}88, transparent)` }} />
+                </div>
+                <div className="grid gap-4 md:grid-cols-2">
+                  {matches.map((m, i) => <MatchCard key={i} m={m} />)}
+                </div>
+              </section>
+            ))}
+            <p className="text-center text-white/60 italic pt-6">
+              Group stage continues June 19 – June 27 · check back for updates as fixtures finalize
+            </p>
+          </div>
+        ) : (
+          <KnockoutView stage={stage} />
+        )}
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map(m => (
-            <MatchCard key={m.id} match={m} onBars={() => setOpen(m)} />
-          ))}
-          {filtered.length === 0 && <p className="text-center col-span-full py-12 text-muted-foreground">No matches — try clearing filters.</p>}
+        <div className="text-center mt-16">
+          <a href="#bars" className="inline-block rounded-md px-7 py-3.5 font-bold uppercase tracking-widest text-sm transition hover:brightness-110"
+            style={{ background: WC_GOLD, color: "#0a0a0a", boxShadow: `0 0 28px ${WC_GOLD}55` }}>
+            🍺 Find a Bar in NYC
+          </a>
         </div>
       </main>
-      {open && <BarsPanel match={open} onClose={() => setOpen(null)} />}
+
+      <WatchInNYC />
       <Footer />
     </div>
   );
 }
 
-function Filter({ label, value, onChange, options, labels }: { label: string; value: string; onChange: (v: string) => void; options: string[]; labels?: string[] }) {
+function MatchCard({ m }: { m: Match }) {
   return (
-    <label className="flex flex-col gap-1">
-      <span className="text-[10px] uppercase tracking-widest text-muted-foreground">{label}</span>
-      <select value={value} onChange={(e) => onChange(e.target.value)}
-        className="bg-input border border-border rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--electric)]">
-        {options.map((o, i) => <option key={o} value={o}>{labels ? labels[i] : o}</option>)}
-      </select>
-    </label>
+    <article
+      className="rounded-xl overflow-hidden relative"
+      style={{
+        background: WC_CARD,
+        border: m.metlife ? `2px solid ${WC_GOLD}` : `1px solid ${WC_GOLD}44`,
+        boxShadow: m.metlife ? `0 0 40px ${WC_GOLD}55` : `0 0 20px ${WC_GOLD}10`,
+      }}
+    >
+      {m.metlife && (
+        <div className="absolute top-3 right-3 z-10 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest"
+          style={{ background: WC_GOLD, color: "#0a0a0a", boxShadow: `0 0 16px ${WC_GOLD}` }}>
+          ⭐ NYC Area
+        </div>
+      )}
+      <div className="flex items-center justify-between px-5 py-2.5 border-b" style={{ borderColor: `${WC_GOLD}33`, background: "rgba(0,0,0,0.3)" }}>
+        <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: WC_GOLD }}>{m.group ?? m.stage}</span>
+        <span className="text-[11px] uppercase tracking-widest text-white/70">{m.time}</span>
+      </div>
+      <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-5">
+        <div className="text-right">
+          <div className="text-3xl md:text-4xl">{m.homeFlag}</div>
+          <p className="font-display tracking-wide mt-1.5 text-base md:text-lg font-bold">{m.home}</p>
+        </div>
+        <div className="font-display text-lg text-white/40">VS</div>
+        <div className="text-left">
+          <div className="text-3xl md:text-4xl">{m.awayFlag}</div>
+          <p className="font-display tracking-wide mt-1.5 text-base md:text-lg font-bold">{m.tbd ? <span className="text-white/60">TBD</span> : m.away}</p>
+        </div>
+      </div>
+      <div className="px-5 py-3 border-t text-xs md:text-sm text-white/80 space-y-1 flex items-center justify-between gap-3" style={{ borderColor: `${WC_GOLD}22`, background: "rgba(0,0,0,0.25)" }}>
+        <div className="space-y-0.5">
+          <div>📍 {m.venue} · {m.city}</div>
+          <div>📺 <span style={{ color: WC_GOLD }}>{m.broadcast}</span></div>
+        </div>
+        <a href="#bars" className="shrink-0 text-[11px] font-bold uppercase tracking-widest whitespace-nowrap hover:underline" style={{ color: WC_GOLD }}>
+          Find a Bar →
+        </a>
+      </div>
+    </article>
+  );
+}
+
+function KnockoutView({ stage }: { stage: Stage }) {
+  const k = KNOCKOUT_PLACEHOLDERS.find(x => x.stage === stage);
+  if (!k) return null;
+  return (
+    <div className="max-w-2xl mx-auto">
+      <article
+        className="rounded-xl p-8 md:p-12 text-center"
+        style={{
+          background: WC_CARD,
+          border: k.metlife ? `2px solid ${WC_GOLD}` : `1px solid ${WC_GOLD}44`,
+          boxShadow: k.metlife ? `0 0 60px ${WC_GOLD}55` : `0 0 30px ${WC_GOLD}10`,
+        }}
+      >
+        {k.metlife && (
+          <div className="inline-block rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest mb-4"
+            style={{ background: WC_GOLD, color: "#0a0a0a" }}>
+            ⭐ NYC Area Game
+          </div>
+        )}
+        <h2 className="font-display text-3xl md:text-5xl font-black tracking-tight" style={{ color: WC_GOLD }}>{stage}</h2>
+        <p className="mt-4 text-white/80 text-lg md:text-xl">{k.window}</p>
+        {k.note && <p className="mt-4 text-white/60 max-w-md mx-auto">{k.note}</p>}
+        <p className="mt-8 text-xs uppercase tracking-widest text-white/40">Bracket finalizes after Group Stage · June 27</p>
+      </article>
+    </div>
   );
 }
