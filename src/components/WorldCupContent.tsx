@@ -212,14 +212,31 @@ function WatchInNYC() {
 
       <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {filtered.map(b => (
-          <article key={b.id} className="rounded-lg p-5" style={{ background: WC_CARD, border: `1px solid ${WC_GOLD}33` }}>
+          <article key={b.id} className="rounded-lg p-5 flex flex-col" style={{ background: WC_CARD, border: `1px solid ${WC_GOLD}33` }}>
             <div className="flex items-start justify-between gap-3">
-              <h3 className="font-display text-xl tracking-wide">{b.name}</h3>
-              <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: `${WC_GOLD}22`, color: WC_GOLD }}>★ {b.rating}</span>
+              <div className="flex-1">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <h3 className="font-display text-xl tracking-wide text-white">{b.name}</h3>
+                  {b.hot && (
+                    <span className="text-[10px] font-bold uppercase tracking-widest rounded-full px-2 py-0.5" style={{ background: "rgba(245,132,38,0.18)", color: "#F58426", border: "1px solid rgba(245,132,38,0.5)" }}>🔥 Hot tonight</span>
+                  )}
+                </div>
+                <p className="text-sm text-white/70 mt-1.5">{b.address}</p>
+              </div>
+              <span className="text-xs px-2 py-0.5 rounded-full whitespace-nowrap" style={{ background: `${WC_GOLD}22`, color: WC_GOLD }}>★ {b.rating}</span>
             </div>
-            <p className="text-sm text-white/60 mt-1">{b.neighborhood} · {b.borough}</p>
-            <p className="text-xs uppercase tracking-widest mt-3" style={{ color: WC_GOLD }}>{b.vibe} · {b.price}</p>
-            <p className="text-sm text-white/75 mt-2 italic">"{b.specialsTemplate}"</p>
+            <div className="flex flex-wrap gap-1.5 mt-3">
+              <span className="text-[10px] uppercase tracking-widest rounded-full px-2 py-0.5" style={{ background: "rgba(255,255,255,0.06)", color: "#fff", border: "1px solid rgba(255,255,255,0.15)" }}>{b.neighborhood} · {b.borough}</span>
+              {(b.tags ?? []).map(t => (
+                <span key={t} className="text-[10px] uppercase tracking-widest rounded-full px-2 py-0.5" style={{ color: WC_GOLD, border: `1px solid ${WC_GOLD}55` }}>{t}</span>
+              ))}
+            </div>
+            <p className="text-sm text-white/75 mt-3 italic">"{b.specialsTemplate}"</p>
+            {b.phone && (
+              <div className="mt-4">
+                <CallToReserveButton name={b.name} phone={b.phone} accent={WC_GOLD} />
+              </div>
+            )}
           </article>
         ))}
       </div>
