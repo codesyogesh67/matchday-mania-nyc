@@ -2,19 +2,17 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { BARS } from "@/data/bars";
+import { CallToReserveButton } from "@/components/CallToReserve";
+import hero1 from "@/assets/wc-hero-1.jpg";
+import hero2 from "@/assets/wc-hero-2.jpg";
+import hero3 from "@/assets/wc-hero-3.jpg";
 
 const WC_GOLD = "#C9A84C";
 const WC_GREEN = "#2d6a4f";
 const WC_BG = "#050a05";
 const WC_CARD = "#0d1f0d";
 
-const HERO_IMAGES = [
-  "https://images.unsplash.com/photo-1574629810360-7efbbe195018?w=1400",
-  "https://images.unsplash.com/photo-1534430480872-3498386e7856?w=1400",
-  "https://images.unsplash.com/photo-1551958219-acbc27753d71?w=1400",
-  "https://images.unsplash.com/photo-1485871981521-5b1fd3805eee?w=1400",
-  "https://images.unsplash.com/photo-1517649763962-0c623066013b?w=1400",
-];
+const HERO_IMAGES = [hero1, hero2, hero3];
 
 const FLAG_MARQUEE = "🇧🇷 🇦🇷 🇫🇷 🇩🇪 🇪🇸 🇵🇹 🇬🇧 🇮🇹 🇳🇱 🇧🇪 🇲🇽 🇺🇸 🇯🇵 🇰🇷 🇸🇳 🇲🇦 🇳🇬 🇨🇲 🇬🇭 🇨🇴 🇺🇾 🇨🇷 🇨🇭 🇩🇰 🇸🇪 🇳🇴 🇵🇱 🇦🇺 🇳🇿".split(" ");
 
