@@ -59,9 +59,11 @@ const FEATURED_BARS: KnicksBar[] = ([
 
 export function KnicksContent() {
   return (
-    <main className="bg-[#0a0a0a] text-white">
+    <main className="bg-[#111111] text-white">
+      <SeriesBanner />
       <KnicksHero />
-      <GameInfo />
+      <Game4Recap />
+      <Game5Section />
       <WatchInNYC />
       <RunSoFar />
       <HypeSection />
@@ -69,9 +71,34 @@ export function KnicksContent() {
   );
 }
 
+function SeriesBanner() {
+  return (
+    <section className="relative overflow-hidden border-b border-white/10"
+      style={{ background: `linear-gradient(90deg, ${KNICKS_BLUE}, #111 50%, ${KNICKS_ORANGE})` }}>
+      <motion.div
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+        className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: `inset 0 0 80px ${KNICKS_ORANGE}80` }}
+      />
+      <div className="relative mx-auto max-w-7xl px-4 py-5 text-center">
+        <p className="font-display text-2xl md:text-4xl tracking-widest">
+          NEW YORK KNICKS — <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 20px ${KNICKS_ORANGE}` }}>NBA FINALS</span>
+        </p>
+        <p className="mt-2 font-bold uppercase tracking-[0.25em] text-sm md:text-base" style={{ color: KNICKS_ORANGE }}>
+          Knicks lead 3–1 · ONE WIN FROM THE CHAMPIONSHIP
+        </p>
+        <p className="mt-1 text-white/80 italic text-xs md:text-sm tracking-wider">
+          "Down 29. Never counted out. The city never sleeps."
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function Countdown() {
-  // Wednesday June 10, 8:30 PM EDT (EDT = UTC-4) → 2026-06-11T00:30:00Z
-  const target = new Date("2026-06-11T00:30:00Z").getTime();
+  // Saturday June 14, 8:30 PM EDT (EDT = UTC-4) → 2026-06-15T00:30:00Z
+  const target = new Date("2026-06-15T00:30:00Z").getTime();
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -149,40 +176,39 @@ function KnicksHero() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: KNICKS_ORANGE }} />
             <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: KNICKS_ORANGE }} />
           </span>
-          Game Night Takeover
+          One Win Away
         </motion.div>
 
         <motion.h1
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="font-display mt-6 text-[14vw] md:text-[8.5rem] leading-[0.85] tracking-tight"
+          className="font-display mt-6 text-[12vw] md:text-[7.5rem] leading-[0.85] tracking-tight"
         >
-          BOUNCE BACK TIME,
+          GREATEST COMEBACK
           <br />
-          <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 40px ${KNICKS_ORANGE}90` }}>NEW YORK</span> 🏀
+          <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 40px ${KNICKS_ORANGE}90` }}>IN FINALS HISTORY?</span> 🗽
         </motion.h1>
 
         <motion.p
           initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
           className="mt-5 font-display text-xl md:text-3xl tracking-[0.2em] text-white/90"
         >
-          NBA FINALS · GAME 4 · <span style={{ color: KNICKS_BLUE, textShadow: `0 0 20px ${KNICKS_BLUE}` }}>NEW YORK KNICKS</span> vs SPURS
+          NBA FINALS · GAME 5 · <span style={{ color: KNICKS_BLUE, textShadow: `0 0 20px ${KNICKS_BLUE}` }}>NEW YORK KNICKS</span> @ SPURS
         </motion.p>
 
-        {/* Series + win prob */}
         <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
           className="mt-8 flex flex-wrap items-center justify-center gap-3"
         >
           <div className="rounded-lg border border-white/15 bg-black/60 px-5 py-3 font-display text-2xl tracking-widest">
-            <span style={{ color: KNICKS_ORANGE }}>NYK 2</span>
+            <span style={{ color: KNICKS_ORANGE }}>NYK 3</span>
             <span className="mx-2 text-white/40">–</span>
             <span className="text-white/70">SAS 1</span>
           </div>
           <div className="rounded-lg border border-white/15 bg-black/60 px-5 py-3 text-sm">
             <span className="uppercase tracking-widest text-white/60 mr-2">Win Prob</span>
-            <span style={{ color: KNICKS_ORANGE }} className="font-bold">Knicks 52.7%</span>
+            <span style={{ color: KNICKS_ORANGE }} className="font-bold">Knicks 54.7%</span>
             <span className="mx-2 text-white/40">|</span>
-            <span className="text-white/70">Spurs 47.3%</span>
+            <span className="text-white/70">Spurs 45.3%</span>
           </div>
         </motion.div>
 
@@ -190,7 +216,7 @@ function KnicksHero() {
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
           className="mt-10"
         >
-          <p className="text-xs uppercase tracking-[0.3em] text-white/60 mb-3">Tipoff in</p>
+          <p className="text-xs uppercase tracking-[0.3em] text-white/60 mb-3">Game 5 Tipoff in</p>
           <Countdown />
         </motion.div>
 
@@ -202,13 +228,13 @@ function KnicksHero() {
             style={{ background: KNICKS_ORANGE, boxShadow: `0 0 30px ${KNICKS_ORANGE}80` }}>
             🍺 Find a Watch Party
           </a>
-          <a href="#watch" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
+          <a href="#recap" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
             style={{ background: KNICKS_BLUE, boxShadow: `0 0 30px ${KNICKS_BLUE}80` }}>
-            📍 Where to Watch in NYC
+            🔥 Game 4 Recap
           </a>
-          <a href="#game" className="rounded-md border px-6 py-3 font-bold uppercase tracking-widest text-sm text-white/90 hover:bg-white/5"
+          <a href="#game5" className="rounded-md border px-6 py-3 font-bold uppercase tracking-widest text-sm text-white/90 hover:bg-white/5"
             style={{ borderColor: "rgba(255,255,255,0.25)" }}>
-            🏟 Game Info
+            🏆 Game 5 Info
           </a>
         </motion.div>
       </div>
@@ -216,25 +242,142 @@ function KnicksHero() {
   );
 }
 
-function GameInfo() {
+function Game4Recap() {
+  const quarters = [
+    { team: "Knicks", q: [22, 27, 26, 32], final: 107, won: true },
+    { team: "Spurs", q: [41, 35, 14, 16], final: 106, won: false },
+  ];
+  const performers = [
+    { icon: "🔥", name: "Jalen Brunson", line: "36 PTS · 7 AST · 5 REB · 3 STL · 48% FG", tag: "CLUTCH KING" },
+    { icon: "💥", name: "OG Anunoby", line: "33 PTS · 7/9 from three (77.8%) · 100% FT", tag: "UNCONSCIOUS" },
+    { icon: "🏀", name: "Karl-Anthony Towns", line: "13 PTS · 10 REB · 80% FG", tag: "DOUBLE-DOUBLE" },
+    { icon: "💪", name: "Josh Hart", line: "6 PTS · 8 REB · 6 AST", tag: "HEART & SOUL" },
+    { icon: "🛡", name: "Jose Alvarado", line: "8 PTS · 3 AST · 100% FG off bench", tag: "SPARK PLUG" },
+  ];
+
   return (
-    <section id="game" className="mx-auto max-w-7xl px-4 py-16 md:py-20">
+    <section id="recap" className="mx-auto max-w-7xl px-4 py-16 md:py-20">
+      <div className="text-center">
+        <p className="text-xs uppercase tracking-[0.3em] text-white/60">Game 4 — Final · Wed June 11 · MSG</p>
+        <h2 className="font-display text-4xl md:text-6xl tracking-wide mt-2">
+          <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 30px ${KNICKS_ORANGE}80` }}>KNICKS WIN</span> 107–106
+        </h2>
+        <p className="mt-3 font-bold uppercase tracking-widest text-sm md:text-base" style={{ color: KNICKS_BLUE }}>
+          Greatest Comeback in NBA Finals History
+        </p>
+      </div>
+
+      {/* Callout */}
+      <motion.div
+        animate={{ boxShadow: [`0 0 0 ${KNICKS_ORANGE}00`, `0 0 40px ${KNICKS_ORANGE}80`, `0 0 0 ${KNICKS_ORANGE}00`] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+        className="mt-8 rounded-xl border p-6 text-center"
+        style={{ borderColor: KNICKS_ORANGE, background: `${KNICKS_ORANGE}10` }}
+      >
+        <p className="font-display text-2xl md:text-4xl tracking-wide" style={{ color: KNICKS_ORANGE }}>
+          TRAILED BY 29 AT HALFTIME.
+        </p>
+        <p className="font-display text-xl md:text-3xl tracking-wide text-white/90 mt-1">
+          Outscored Spurs <span style={{ color: KNICKS_ORANGE }}>58–30</span> in the second half.
+        </p>
+      </motion.div>
+
+      {/* Box score table */}
+      <div className="mt-10 overflow-x-auto rounded-lg border border-white/10 bg-black/40">
+        <table className="w-full text-center text-sm md:text-base">
+          <thead>
+            <tr className="text-white/60 uppercase text-xs tracking-widest">
+              <th className="py-3 px-3 text-left">Team</th>
+              <th className="py-3 px-3">Q1</th>
+              <th className="py-3 px-3">Q2</th>
+              <th className="py-3 px-3">Q3</th>
+              <th className="py-3 px-3">Q4</th>
+              <th className="py-3 px-3 font-display text-base" style={{ color: KNICKS_ORANGE }}>FINAL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {quarters.map(r => (
+              <tr key={r.team} className="border-t border-white/10">
+                <td className="py-3 px-3 text-left font-display text-xl"
+                  style={{ color: r.won ? KNICKS_ORANGE : "#fff" }}>{r.team}</td>
+                {r.q.map((n, i) => (
+                  <td key={i} className="py-3 px-3 tabular-nums text-white/80">{n}</td>
+                ))}
+                <td className="py-3 px-3 font-display text-2xl tabular-nums"
+                  style={{ color: r.won ? KNICKS_ORANGE : "#fff" }}>{r.final}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {/* Performers */}
+      <h3 className="mt-14 font-display text-3xl md:text-4xl tracking-wide text-center">
+        KEY <span style={{ color: KNICKS_ORANGE }}>PERFORMERS</span>
+      </h3>
+      <div className="mt-6 grid md:grid-cols-2 lg:grid-cols-3 gap-3">
+        {performers.map(p => (
+          <div key={p.name} className="rounded-lg border border-white/10 bg-white/[0.03] p-5">
+            <div className="flex items-center justify-between">
+              <span className="text-2xl">{p.icon}</span>
+              <span className="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full"
+                style={{ background: `${KNICKS_ORANGE}20`, color: KNICKS_ORANGE }}>{p.tag}</span>
+            </div>
+            <p className="font-display text-2xl mt-2">{p.name}</p>
+            <p className="text-sm text-white/70 mt-1">{p.line}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Team stats */}
+      <div className="mt-10 grid md:grid-cols-3 gap-3">
+        <StatTile label="Field Goal %" value="46.2%" />
+        <StatTile label="Three-Point %" value="46.9%" />
+        <StatTile label="Rebounds · Assists" value="53 · 23" />
+      </div>
+    </section>
+  );
+}
+
+function StatTile({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-white/10 bg-black/40 p-5 text-center">
+      <p className="text-xs uppercase tracking-widest text-white/50">{label}</p>
+      <p className="font-display text-4xl mt-2" style={{ color: KNICKS_ORANGE, textShadow: `0 0 20px ${KNICKS_ORANGE}60` }}>{value}</p>
+    </div>
+  );
+}
+
+function Game5Section() {
+  return (
+    <section id="game5" className="mx-auto max-w-7xl px-4 py-16 md:py-20">
       <h2 className="font-display text-4xl md:text-6xl tracking-wide text-center">
-        <span style={{ color: KNICKS_BLUE }}>GAME</span> <span style={{ color: KNICKS_ORANGE }}>INFO</span>
+        GAME 5 · <span style={{ color: KNICKS_ORANGE }}>CHAMPIONSHIP OPPORTUNITY</span>
       </h2>
 
       <div className="mt-10 grid md:grid-cols-2 gap-4">
-        <InfoCard label="Venue" value="Madison Square Garden" sub="New York City" />
-        <InfoCard label="Tipoff" value="8:30 PM EDT" sub="Wednesday, June 10" />
-        <InfoCard label="Series" value="NBA Finals — Game 4" sub="NYK leads 2-1" />
-        <InfoCard label="Broadcast" value="ABC / ESPN" sub="National TV" />
+        <InfoCard label="Match" value="Knicks @ Spurs" sub="NYK leads 3–1" />
+        <InfoCard label="Tipoff" value="8:30 PM ET" sub="Saturday, June 14" />
+        <InfoCard label="Venue" value="AT&T Center" sub="San Antonio, TX (Spurs home)" />
+        <InfoCard label="Win Probability" value="Knicks 54.7%" sub="Spurs 45.3%" />
       </div>
 
-      <h3 className="mt-14 font-display text-3xl md:text-4xl tracking-wide text-center">SERIES SO FAR</h3>
-      <div className="mt-6 grid md:grid-cols-3 gap-4">
-        <RecapCard game="Game 1 — Final" result="NYK 105 – SAS 95" note="Brunson 32 pts. NYC takes the opener in San Antonio." won />
-        <RecapCard game="Game 2 — Final" result="NYK 105 – SAS 104" note="OG Anunoby buzzer-beater. Garden erupts in San Antonio." won />
-        <RecapCard game="Game 3 — Final" result="SAS 115 – NYK 111" note="Spurs steal one at the Garden. Series now 2-1." won={false} />
+      <motion.div
+        animate={{ scale: [1, 1.02, 1], boxShadow: [`0 0 0 ${KNICKS_ORANGE}00`, `0 0 50px ${KNICKS_ORANGE}90`, `0 0 0 ${KNICKS_ORANGE}00`] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+        className="mt-10 rounded-xl border p-6 md:p-8 text-center"
+        style={{ borderColor: KNICKS_ORANGE, background: `linear-gradient(135deg, ${KNICKS_BLUE}30, ${KNICKS_ORANGE}25)` }}
+      >
+        <p className="font-display text-2xl md:text-4xl tracking-wide leading-tight">
+          WIN SATURDAY. BRING THE TROPHY HOME
+          <br />
+          <span style={{ color: KNICKS_ORANGE }}>TO NEW YORK FOR THE FIRST TIME SINCE 1973.</span> 🏆
+        </p>
+      </motion.div>
+
+      <div className="mt-10">
+        <p className="text-xs uppercase tracking-[0.3em] text-white/60 mb-3 text-center">Tipoff in</p>
+        <Countdown />
       </div>
     </section>
   );
@@ -247,22 +390,6 @@ function InfoCard({ label, value, sub }: { label: string; value: string; sub: st
       <p className="text-xs uppercase tracking-widest text-white/50">{label}</p>
       <p className="font-display text-3xl mt-1" style={{ color: KNICKS_ORANGE }}>{value}</p>
       <p className="text-sm text-white/70 mt-1">{sub}</p>
-    </div>
-  );
-}
-
-function RecapCard({ game, result, note, won }: { game: string; result: string; note: string; won: boolean }) {
-  return (
-    <div className="rounded-lg border border-white/10 bg-black/40 p-5">
-      <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-widest text-white/50">{game}</span>
-        <span className="text-xs px-2 py-0.5 rounded-full font-bold"
-          style={{ background: won ? `${KNICKS_ORANGE}20` : `${KNICKS_BLUE}20`, color: won ? KNICKS_ORANGE : "#fff" }}>
-          {won ? "W" : "L"}
-        </span>
-      </div>
-      <p className="font-display text-3xl mt-2" style={{ color: KNICKS_BLUE }}>{result}</p>
-      <p className="text-sm text-white/70 mt-2">{note}</p>
     </div>
   );
 }
@@ -388,7 +515,7 @@ function RunSoFar() {
     { round: "Round 1", opp: "Atlanta Hawks", result: "Won 4-2", icon: "✅" },
     { round: "Round 2", opp: "Philadelphia 76ers", result: "Swept 4-0", icon: "✅" },
     { round: "ECF", opp: "Cleveland Cavaliers", result: "Swept 4-0", icon: "✅" },
-    { round: "NBA Finals", opp: "San Antonio Spurs", result: "Leading 2-1", icon: "🔥" },
+    { round: "NBA Finals", opp: "San Antonio Spurs", result: "Leading 3-1 — One Win Away", icon: "🏆" },
   ];
   return (
     <section className="mx-auto max-w-5xl px-4 py-16 md:py-20">
