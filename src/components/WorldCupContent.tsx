@@ -185,7 +185,7 @@ function UnitySection() {
   );
 }
 
-function WatchInNYC() {
+export function WatchInNYC() {
   const [q, setQ] = useState("");
   const filtered = BARS.filter(b => {
     const s = q.trim().toLowerCase();
