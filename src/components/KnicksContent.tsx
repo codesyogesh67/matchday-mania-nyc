@@ -59,13 +59,40 @@ const FEATURED_BARS: KnicksBar[] = ([
 
 export function KnicksContent() {
   return (
-    <main className="bg-[#0a0a0a] text-white">
+    <main className="bg-[#111111] text-white">
+      <SeriesBanner />
       <KnicksHero />
-      <GameInfo />
+      <Game4Recap />
+      <Game5Section />
       <WatchInNYC />
       <RunSoFar />
       <HypeSection />
     </main>
+  );
+}
+
+function SeriesBanner() {
+  return (
+    <section className="relative overflow-hidden border-b border-white/10"
+      style={{ background: `linear-gradient(90deg, ${KNICKS_BLUE}, #111 50%, ${KNICKS_ORANGE})` }}>
+      <motion.div
+        animate={{ opacity: [0.6, 1, 0.6] }}
+        transition={{ duration: 2.5, repeat: Infinity }}
+        className="absolute inset-0 pointer-events-none"
+        style={{ boxShadow: `inset 0 0 80px ${KNICKS_ORANGE}80` }}
+      />
+      <div className="relative mx-auto max-w-7xl px-4 py-5 text-center">
+        <p className="font-display text-2xl md:text-4xl tracking-widest">
+          NEW YORK KNICKS — <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 20px ${KNICKS_ORANGE}` }}>NBA FINALS</span>
+        </p>
+        <p className="mt-2 font-bold uppercase tracking-[0.25em] text-sm md:text-base" style={{ color: KNICKS_ORANGE }}>
+          Knicks lead 3–1 · ONE WIN FROM THE CHAMPIONSHIP
+        </p>
+        <p className="mt-1 text-white/80 italic text-xs md:text-sm tracking-wider">
+          "Down 29. Never counted out. The city never sleeps."
+        </p>
+      </div>
+    </section>
   );
 }
 
