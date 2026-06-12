@@ -1,5 +1,5 @@
 export type GameDayEvent = {
-  date: string; // YYYY-MM-DD (ET)
+  date?: string; // optional — if omitted, always active
   route: "/knicks" | "/worldcup";
   label: string;
   active: boolean;
@@ -7,9 +7,9 @@ export type GameDayEvent = {
 
 export const gameDayEvents: GameDayEvent[] = [
   {
-    date: "2026-06-11",
+    // No date = always active. World Cup runs all summer.
     route: "/worldcup",
-    label: "⚽ FIFA World Cup 2026 Opening Day",
+    label: "⚽ FIFA World Cup 2026",
     active: true,
   },
 ];
@@ -27,5 +27,7 @@ export function todayET(): string {
 
 export function getActiveGameDay(): GameDayEvent | null {
   const today = todayET();
-  return gameDayEvents.find(e => e.active && e.date === today) ?? null;
+  return (
+    gameDayEvents.find(e => e.active && (!e.date || e.date === today)) ?? null
+  );
 }
