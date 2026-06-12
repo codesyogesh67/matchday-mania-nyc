@@ -7,6 +7,7 @@ import { getMatchStatus, todayEtIso, type MatchStatus } from "@/lib/matchStatus"
 import hero1 from "@/assets/wc-hero-1.jpg";
 import hero2 from "@/assets/wc-hero-2.jpg";
 import hero3 from "@/assets/wc-hero-3.jpg";
+import { MATCHES } from "@/routes/schedule";
 
 const WC_GOLD = "#C9A84C";
 const WC_GREEN = "#2d6a4f";
@@ -103,17 +104,6 @@ function Hero() {
   );
 }
 
-type TodayMatch = {
-  iso: string;
-  group: string; home: string; homeFlag: string; away: string; awayFlag: string;
-  time: string; venue: string; broadcast: string;
-  homeScore?: number; awayScore?: number; metlife?: boolean;
-};
-const TODAY_MATCHES: TodayMatch[] = [
-  { iso: "2026-06-11", group: "Group A", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", time: "3:00 PM ET", venue: "Estadio Azteca, Mexico City", broadcast: "FOX / Tubi (free)", homeScore: 2, awayScore: 0 },
-  { iso: "2026-06-11", group: "Group A", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", time: "10:00 PM ET", venue: "Estadio Akron, Guadalajara, Mexico", broadcast: "FS1" },
-];
-
 function TodaysGames() {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -122,25 +112,38 @@ function TodaysGames() {
   }, []);
 
   const todayIso = todayEtIso(now);
-  const items = TODAY_MATCHES
-    .filter(m => m.iso === todayIso)
-    .map(m => ({ m, s: getMatchStatus(m.iso, m.time, now) }));
 
-  // Sort: LIVE first, UPCOMING next (soonest first), FT last
+  // Pull today's matches dynamically from the schedule MATCHES array
+  const todayMatches = MATCHES.filter(m => m.iso === todayIso);
+
   const order: Record<MatchStatus, number> = { live: 0, upcoming: 1, ft: 2 };
-  items.sort((a, b) => {
-    const o = order[a.s.status] - order[b.s.status];
-    if (o !== 0) return o;
-    return a.s.kickoffMs - b.s.kickoffMs;
-  });
+  const items = todayMatches
+    .map(m => ({ m, s: getMatchStatus(m.iso, m.time, now) }))
+    .sort((a, b) => {
+      const o = order[a.s.status] - order[b.s.status];
+      if (o !== 0) return o;
+      return a.s.kickoffMs - b.s.kickoffMs;
+    });
 
-  const list = items.length ? items : TODAY_MATCHES.map(m => ({ m, s: getMatchStatus(m.iso, m.time, now) }));
+  // Format today's date for the section header
+  const headerDate = new Date(now).toLocaleDateString("en-US", {
+    weekday: "long", month: "long", day: "numeric", timeZone: "America/New_York"
+  }).toUpperCase();
+
+  if (items.length === 0) {
+    return (
+      <section id="today" className="relative mx-auto max-w-7xl px-4 py-20 md:py-28">
+        <SectionHeader eyebrow="Today's Matches" title="NO MATCHES TODAY" />
+        <p className="mt-8 text-center text-white/60">Check the full schedule for upcoming fixtures.</p>
+      </section>
+    );
+  }
 
   return (
     <section id="today" className="relative mx-auto max-w-7xl px-4 py-20 md:py-28">
-      <SectionHeader eyebrow="Kick Off Day" title="JUNE 11 · 2026" />
+      <SectionHeader eyebrow="Today's Matches" title={headerDate} />
       <div className="mt-12 grid gap-6 md:grid-cols-2">
-        {list.map(({ m, s }, i) => {
+        {items.map(({ m, s }, i) => {
           const isLive = s.status === "live";
           const isFt = s.status === "ft";
           return (
@@ -176,7 +179,7 @@ function TodaysGames() {
                 </div>
               </div>
               <div className="px-5 py-4 border-t text-sm text-white/80 space-y-1" style={{ borderColor: `${WC_GOLD}22`, background: "rgba(0,0,0,0.25)" }}>
-                <div>📍 {m.venue}</div>
+                <div>📍 {m.venue}, {m.city}</div>
                 <div>📺 <span style={{ color: WC_GOLD }}>{m.broadcast}</span></div>
               </div>
             </motion.article>
