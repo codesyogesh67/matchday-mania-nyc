@@ -60,7 +60,7 @@ function Hero() {
           className="text-[10px] md:text-xs uppercase font-semibold"
           style={{ color: WC_GOLD, letterSpacing: "0.35em", textShadow: `0 0 24px ${WC_GOLD}80` }}
         >
-          FIFA World Cup 2026 · Opens Today · June 11
+          FIFA World Cup 2026 · {new Date().toLocaleDateString("en-US", { month: "long", day: "numeric", timeZone: "America/New_York" })}
         </motion.p>
 
         <motion.h1
