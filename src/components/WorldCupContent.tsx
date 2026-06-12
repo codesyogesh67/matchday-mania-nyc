@@ -3,6 +3,7 @@ import { Link } from "@tanstack/react-router";
 import { motion, AnimatePresence } from "framer-motion";
 import { BARS } from "@/data/bars";
 import { CallToReserveButton } from "@/components/CallToReserve";
+import { getMatchStatus, todayEtIso, type MatchStatus } from "@/lib/matchStatus";
 import hero1 from "@/assets/wc-hero-1.jpg";
 import hero2 from "@/assets/wc-hero-2.jpg";
 import hero3 from "@/assets/wc-hero-3.jpg";
@@ -92,6 +93,10 @@ function Hero() {
             style={{ border: `2px solid ${WC_GOLD}`, color: WC_GOLD, background: "transparent" }}>
             ⚽ Full Schedule
           </Link>
+          <Link to="/standings" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-xs md:text-sm text-white transition hover:bg-white hover:text-black"
+            style={{ border: `2px solid #ffffff`, background: "transparent" }}>
+            📊 Standings
+          </Link>
         </motion.div>
       </div>
     </section>
@@ -99,48 +104,84 @@ function Hero() {
 }
 
 type TodayMatch = {
+  iso: string;
   group: string; home: string; homeFlag: string; away: string; awayFlag: string;
   time: string; venue: string; broadcast: string;
+  homeScore?: number; awayScore?: number; metlife?: boolean;
 };
 const TODAY_MATCHES: TodayMatch[] = [
-  { group: "Group A", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", time: "3:00 PM ET", venue: "Estadio Azteca, Mexico City", broadcast: "FOX / Tubi (free)" },
-  { group: "Group A", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", time: "10:00 PM ET", venue: "Estadio Akron, Guadalajara, Mexico", broadcast: "FS1" },
+  { iso: "2026-06-11", group: "Group A", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", time: "3:00 PM ET", venue: "Estadio Azteca, Mexico City", broadcast: "FOX / Tubi (free)", homeScore: 2, awayScore: 0 },
+  { iso: "2026-06-11", group: "Group A", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", time: "10:00 PM ET", venue: "Estadio Akron, Guadalajara, Mexico", broadcast: "FS1" },
 ];
 
 function TodaysGames() {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(id);
+  }, []);
+
+  const todayIso = todayEtIso(now);
+  const items = TODAY_MATCHES
+    .filter(m => m.iso === todayIso)
+    .map(m => ({ m, s: getMatchStatus(m.iso, m.time, now) }));
+
+  // Sort: LIVE first, UPCOMING next (soonest first), FT last
+  const order: Record<MatchStatus, number> = { live: 0, upcoming: 1, ft: 2 };
+  items.sort((a, b) => {
+    const o = order[a.s.status] - order[b.s.status];
+    if (o !== 0) return o;
+    return a.s.kickoffMs - b.s.kickoffMs;
+  });
+
+  const list = items.length ? items : TODAY_MATCHES.map(m => ({ m, s: getMatchStatus(m.iso, m.time, now) }));
+
   return (
     <section id="today" className="relative mx-auto max-w-7xl px-4 py-20 md:py-28">
       <SectionHeader eyebrow="Kick Off Day" title="JUNE 11 · 2026" />
       <div className="mt-12 grid gap-6 md:grid-cols-2">
-        {TODAY_MATCHES.map((m, i) => (
-          <motion.article
-            key={i}
-            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            transition={{ delay: i * 0.1 }}
-            className="rounded-xl overflow-hidden"
-            style={{ background: WC_CARD, border: `1px solid ${WC_GOLD}66`, boxShadow: `0 0 40px ${WC_GOLD}15` }}
-          >
-            <div className="flex items-center justify-between px-5 py-3 border-b" style={{ borderColor: `${WC_GOLD}33`, background: "rgba(0,0,0,0.3)" }}>
-              <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: WC_GOLD }}>{m.group}</span>
-              <span className="text-[11px] uppercase tracking-widest text-white/70">{m.time}</span>
-            </div>
-            <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-8">
-              <div className="text-right">
-                <div className="text-5xl md:text-6xl">{m.homeFlag}</div>
-                <p className="font-display tracking-wide mt-2 text-xl md:text-2xl font-bold">{m.home}</p>
+        {list.map(({ m, s }, i) => {
+          const isLive = s.status === "live";
+          const isFt = s.status === "ft";
+          return (
+            <motion.article
+              key={`${m.iso}-${m.time}-${i}`}
+              initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              transition={{ delay: i * 0.1 }}
+              className={`rounded-xl overflow-hidden relative ${isLive ? "animate-pulse-glow" : ""}`}
+              style={{
+                background: WC_CARD,
+                border: isLive ? `2px solid ${WC_GOLD}` : `1px solid ${WC_GOLD}66`,
+                boxShadow: isLive ? `0 0 50px ${WC_GOLD}80` : `0 0 40px ${WC_GOLD}15`,
+                opacity: isFt ? 0.65 : 1,
+              }}
+            >
+              <div className="flex items-center justify-between px-5 py-3 border-b" style={{ borderColor: `${WC_GOLD}33`, background: "rgba(0,0,0,0.3)" }}>
+                <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: WC_GOLD }}>{m.group}</span>
+                <StatusBadge status={s.status} time={m.time} minutesPlayed={s.minutesPlayed} />
               </div>
-              <div className="font-display text-2xl text-white/40">VS</div>
-              <div className="text-left">
-                <div className="text-5xl md:text-6xl">{m.awayFlag}</div>
-                <p className="font-display tracking-wide mt-2 text-xl md:text-2xl font-bold">{m.away}</p>
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-5 py-8">
+                <div className="text-right">
+                  <div className="text-5xl md:text-6xl">{m.homeFlag}</div>
+                  <p className="font-display tracking-wide mt-2 text-xl md:text-2xl font-bold">{m.home}</p>
+                </div>
+                <div className="font-display text-2xl text-white/40">
+                  {(isFt || isLive) && m.homeScore != null && m.awayScore != null
+                    ? <span className="text-white">{m.homeScore}–{m.awayScore}</span>
+                    : "VS"}
+                </div>
+                <div className="text-left">
+                  <div className="text-5xl md:text-6xl">{m.awayFlag}</div>
+                  <p className="font-display tracking-wide mt-2 text-xl md:text-2xl font-bold">{m.away}</p>
+                </div>
               </div>
-            </div>
-            <div className="px-5 py-4 border-t text-sm text-white/80 space-y-1" style={{ borderColor: `${WC_GOLD}22`, background: "rgba(0,0,0,0.25)" }}>
-              <div>📍 {m.venue}</div>
-              <div>📺 <span style={{ color: WC_GOLD }}>{m.broadcast}</span></div>
-            </div>
-          </motion.article>
-        ))}
+              <div className="px-5 py-4 border-t text-sm text-white/80 space-y-1" style={{ borderColor: `${WC_GOLD}22`, background: "rgba(0,0,0,0.25)" }}>
+                <div>📍 {m.venue}</div>
+                <div>📺 <span style={{ color: WC_GOLD }}>{m.broadcast}</span></div>
+              </div>
+            </motion.article>
+          );
+        })}
       </div>
       <p className="mt-10 text-center text-sm md:text-base text-white/70 italic">
         The Final comes home to <span style={{ color: WC_GOLD }} className="font-semibold not-italic">MetLife Stadium, New Jersey</span> · July 19, 2026
@@ -148,6 +189,27 @@ function TodaysGames() {
     </section>
   );
 }
+
+export function StatusBadge({ status, time, minutesPlayed }: { status: "upcoming"|"live"|"ft"; time: string; minutesPlayed?: number }) {
+  if (status === "live") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-widest text-white animate-pulse-glow"
+        style={{ background: "#FF0000", boxShadow: "0 0 14px #FF0000aa" }}>
+        🔴 Live{minutesPlayed ? ` · ~${minutesPlayed}'` : ""}
+      </span>
+    );
+  }
+  if (status === "ft") {
+    return (
+      <span className="inline-flex items-center rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-white"
+        style={{ background: "#333333" }}>
+        FT
+      </span>
+    );
+  }
+  return <span className="text-[11px] uppercase tracking-widest" style={{ color: "#C9A84C" }}>{time}</span>;
+}
+
 
 function UnitySection() {
   return (
