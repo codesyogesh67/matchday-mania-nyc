@@ -27,7 +27,7 @@ type Stage =
   | "Semifinals"
   | "Final";
 
-type Match = {
+export type Match = {
   stage: Stage;
   group?: string;
   iso: string;
@@ -44,7 +44,7 @@ type Match = {
   awayScore?: number;
 };
 
-const MATCHES: Match[] = [
+export const MATCHES: Match[] = [
   // June 11
   { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "3:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FOX / Tubi", homeScore: 2, awayScore: 0 },
   { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "10:00 PM ET", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FS1" },
