@@ -127,7 +127,7 @@ function TodaysGames() {
     .map(m => ({ m, s: getMatchStatus(m.iso, m.time, now) }));
 
   // Sort: LIVE first, UPCOMING next (soonest first), FT last
-  const order = { live: 0, upcoming: 1, ft: 2 } as const;
+  const order: Record<MatchStatus, number> = { live: 0, upcoming: 1, ft: 2 };
   items.sort((a, b) => {
     const o = order[a.s.status] - order[b.s.status];
     if (o !== 0) return o;
