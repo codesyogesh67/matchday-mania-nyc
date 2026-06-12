@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { NavBar } from "@/components/NavBar";
 import { Footer } from "@/components/Footer";
-import { WatchInNYC } from "@/components/WorldCupContent";
+import { WatchInNYC, StatusBadge } from "@/components/WorldCupContent";
+import { getMatchStatus, type MatchStatus } from "@/lib/matchStatus";
 
 export const Route = createFileRoute("/schedule")({
   head: () => ({
@@ -29,6 +30,7 @@ type Stage =
 type Match = {
   stage: Stage;
   group?: string;
+  iso: string;
   date: string; // display date
   time: string;
   home: string; homeFlag: string;
@@ -38,42 +40,44 @@ type Match = {
   broadcast: string;
   metlife?: boolean;
   tbd?: boolean;
+  homeScore?: number;
+  awayScore?: number;
 };
 
 const MATCHES: Match[] = [
   // June 11
-  { stage: "Group Stage", group: "Group A", date: "Thu Jun 11", time: "3:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FOX / Tubi" },
-  { stage: "Group Stage", group: "Group A", date: "Thu Jun 11", time: "10:00 PM ET", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "3:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FOX / Tubi", homeScore: 2, awayScore: 0 },
+  { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "10:00 PM ET", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia", awayFlag: "🇨🇿", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FS1" },
   // June 12
-  { stage: "Group Stage", group: "Group B", date: "Fri Jun 12", time: "3:00 PM ET", home: "Canada", homeFlag: "🇨🇦", away: "TBD", awayFlag: "⚽", venue: "BMO Field", city: "Toronto", broadcast: "FS1", tbd: true },
-  { stage: "Group Stage", group: "Group D", date: "Fri Jun 12", time: "9:00 PM ET", home: "USA", homeFlag: "🇺🇸", away: "Paraguay", awayFlag: "🇵🇾", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group B", iso: "2026-06-12", date: "Fri Jun 12", time: "3:00 PM ET", home: "Canada", homeFlag: "🇨🇦", away: "TBD", awayFlag: "⚽", venue: "BMO Field", city: "Toronto", broadcast: "FS1", tbd: true },
+  { stage: "Group Stage", group: "Group D", iso: "2026-06-12", date: "Fri Jun 12", time: "9:00 PM ET", home: "USA", homeFlag: "🇺🇸", away: "Paraguay", awayFlag: "🇵🇾", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FOX" },
   // June 13
-  { stage: "Group Stage", group: "Group C", date: "Sat Jun 13", time: "3:00 PM ET", home: "Wales", homeFlag: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", away: "Saudi Arabia", awayFlag: "🇸🇦", venue: "Lumen Field", city: "Seattle", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group C", date: "Sat Jun 13", time: "6:00 PM ET", home: "Brazil", homeFlag: "🇧🇷", away: "Cameroon", awayFlag: "🇨🇲", venue: "Hard Rock Stadium", city: "Miami", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group C", iso: "2026-06-13", date: "Sat Jun 13", time: "3:00 PM ET", home: "Wales", homeFlag: "🏴󠁧󠁢󠁷󠁬󠁳󠁿", away: "Saudi Arabia", awayFlag: "🇸🇦", venue: "Lumen Field", city: "Seattle", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group C", iso: "2026-06-13", date: "Sat Jun 13", time: "6:00 PM ET", home: "Brazil", homeFlag: "🇧🇷", away: "Cameroon", awayFlag: "🇨🇲", venue: "Hard Rock Stadium", city: "Miami", broadcast: "FOX" },
   // June 14
-  { stage: "Group Stage", group: "Group E", date: "Sun Jun 14", time: "12:00 PM ET", home: "Ivory Coast", homeFlag: "🇨🇮", away: "Ecuador", awayFlag: "🇪🇨", venue: "Lincoln Financial Field", city: "Philadelphia", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group E", date: "Sun Jun 14", time: "1:00 PM ET", home: "Germany", homeFlag: "🇩🇪", away: "Curaçao", awayFlag: "🇨🇼", venue: "NRG Stadium", city: "Houston", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group F", date: "Sun Jun 14", time: "4:00 PM ET", home: "Netherlands", homeFlag: "🇳🇱", away: "Japan", awayFlag: "🇯🇵", venue: "AT&T Stadium", city: "Arlington", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group E", iso: "2026-06-14", date: "Sun Jun 14", time: "12:00 PM ET", home: "Ivory Coast", homeFlag: "🇨🇮", away: "Ecuador", awayFlag: "🇪🇨", venue: "Lincoln Financial Field", city: "Philadelphia", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group E", iso: "2026-06-14", date: "Sun Jun 14", time: "1:00 PM ET", home: "Germany", homeFlag: "🇩🇪", away: "Curaçao", awayFlag: "🇨🇼", venue: "NRG Stadium", city: "Houston", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group F", iso: "2026-06-14", date: "Sun Jun 14", time: "4:00 PM ET", home: "Netherlands", homeFlag: "🇳🇱", away: "Japan", awayFlag: "🇯🇵", venue: "AT&T Stadium", city: "Arlington", broadcast: "FOX" },
   // June 15
-  { stage: "Group Stage", group: "Group H", date: "Mon Jun 15", time: "1:00 PM ET", home: "Spain", homeFlag: "🇪🇸", away: "Cape Verde", awayFlag: "🇨🇻", venue: "Mercedes-Benz Stadium", city: "Atlanta", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group G", date: "Mon Jun 15", time: "6:00 PM ET", home: "Belgium", homeFlag: "🇧🇪", away: "Egypt", awayFlag: "🇪🇬", venue: "Lumen Field", city: "Seattle", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group H", date: "Mon Jun 15", time: "6:00 PM ET", home: "Saudi Arabia", homeFlag: "🇸🇦", away: "Uruguay", awayFlag: "🇺🇾", venue: "Hard Rock Stadium", city: "Miami", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group G", date: "Mon Jun 15", time: "12:00 AM ET", home: "Iran", homeFlag: "🇮🇷", away: "New Zealand", awayFlag: "🇳🇿", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group H", iso: "2026-06-15", date: "Mon Jun 15", time: "1:00 PM ET", home: "Spain", homeFlag: "🇪🇸", away: "Cape Verde", awayFlag: "🇨🇻", venue: "Mercedes-Benz Stadium", city: "Atlanta", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group G", iso: "2026-06-15", date: "Mon Jun 15", time: "6:00 PM ET", home: "Belgium", homeFlag: "🇧🇪", away: "Egypt", awayFlag: "🇪🇬", venue: "Lumen Field", city: "Seattle", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group H", iso: "2026-06-15", date: "Mon Jun 15", time: "6:00 PM ET", home: "Saudi Arabia", homeFlag: "🇸🇦", away: "Uruguay", awayFlag: "🇺🇾", venue: "Hard Rock Stadium", city: "Miami", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group G", iso: "2026-06-15", date: "Mon Jun 15", time: "12:00 AM ET", home: "Iran", homeFlag: "🇮🇷", away: "New Zealand", awayFlag: "🇳🇿", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FS1" },
   // June 16 — METLIFE!
-  { stage: "Group Stage", group: "Group I", date: "Tue Jun 16", time: "3:00 PM ET", home: "France", homeFlag: "🇫🇷", away: "Senegal", awayFlag: "🇸🇳", venue: "MetLife Stadium", city: "East Rutherford NJ", broadcast: "FOX", metlife: true },
-  { stage: "Group Stage", group: "Group I", date: "Tue Jun 16", time: "6:00 PM ET", home: "Iraq", homeFlag: "🇮🇶", away: "Norway", awayFlag: "🇳🇴", venue: "Gillette Stadium", city: "Foxborough MA", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group J", date: "Tue Jun 16", time: "9:00 PM ET", home: "Argentina", homeFlag: "🇦🇷", away: "Algeria", awayFlag: "🇩🇿", venue: "Arrowhead Stadium", city: "Kansas City", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group J", date: "Tue Jun 16", time: "9:00 PM ET", home: "Austria", homeFlag: "🇦🇹", away: "Jordan", awayFlag: "🇯🇴", venue: "Levi's Stadium", city: "Santa Clara", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group I", iso: "2026-06-16", date: "Tue Jun 16", time: "3:00 PM ET", home: "France", homeFlag: "🇫🇷", away: "Senegal", awayFlag: "🇸🇳", venue: "MetLife Stadium", city: "East Rutherford NJ", broadcast: "FOX", metlife: true },
+  { stage: "Group Stage", group: "Group I", iso: "2026-06-16", date: "Tue Jun 16", time: "6:00 PM ET", home: "Iraq", homeFlag: "🇮🇶", away: "Norway", awayFlag: "🇳🇴", venue: "Gillette Stadium", city: "Foxborough MA", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group J", iso: "2026-06-16", date: "Tue Jun 16", time: "9:00 PM ET", home: "Argentina", homeFlag: "🇦🇷", away: "Algeria", awayFlag: "🇩🇿", venue: "Arrowhead Stadium", city: "Kansas City", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group J", iso: "2026-06-16", date: "Tue Jun 16", time: "9:00 PM ET", home: "Austria", homeFlag: "🇦🇹", away: "Jordan", awayFlag: "🇯🇴", venue: "Levi's Stadium", city: "Santa Clara", broadcast: "FS1" },
   // June 17
-  { stage: "Group Stage", group: "Group K", date: "Wed Jun 17", time: "1:00 PM ET", home: "Portugal", homeFlag: "🇵🇹", away: "DR Congo", awayFlag: "🇨🇩", venue: "NRG Stadium", city: "Houston", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group L", date: "Wed Jun 17", time: "4:00 PM ET", home: "England", homeFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", away: "Croatia", awayFlag: "🇭🇷", venue: "AT&T Stadium", city: "Arlington", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group L", date: "Wed Jun 17", time: "7:00 PM ET", home: "Ghana", homeFlag: "🇬🇭", away: "Panama", awayFlag: "🇵🇦", venue: "BMO Field", city: "Toronto", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group K", date: "Wed Jun 17", time: "10:00 PM ET", home: "Uzbekistan", homeFlag: "🇺🇿", away: "Colombia", awayFlag: "🇨🇴", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group K", iso: "2026-06-17", date: "Wed Jun 17", time: "1:00 PM ET", home: "Portugal", homeFlag: "🇵🇹", away: "DR Congo", awayFlag: "🇨🇩", venue: "NRG Stadium", city: "Houston", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group L", iso: "2026-06-17", date: "Wed Jun 17", time: "4:00 PM ET", home: "England", homeFlag: "🏴󠁧󠁢󠁥󠁮󠁧󠁿", away: "Croatia", awayFlag: "🇭🇷", venue: "AT&T Stadium", city: "Arlington", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group L", iso: "2026-06-17", date: "Wed Jun 17", time: "7:00 PM ET", home: "Ghana", homeFlag: "🇬🇭", away: "Panama", awayFlag: "🇵🇦", venue: "BMO Field", city: "Toronto", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group K", iso: "2026-06-17", date: "Wed Jun 17", time: "10:00 PM ET", home: "Uzbekistan", homeFlag: "🇺🇿", away: "Colombia", awayFlag: "🇨🇴", venue: "Estadio Azteca", city: "Mexico City", broadcast: "FS1" },
   // June 18
-  { stage: "Group Stage", group: "Group A", date: "Thu Jun 18", time: "12:00 PM ET", home: "Czechia", homeFlag: "🇨🇿", away: "South Africa", awayFlag: "🇿🇦", venue: "Mercedes-Benz Stadium", city: "Atlanta", broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group B", date: "Thu Jun 18", time: "3:00 PM ET", home: "Switzerland", homeFlag: "🇨🇭", away: "Bosnia & Herzegovina", awayFlag: "🇧🇦", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group B", date: "Thu Jun 18", time: "6:00 PM ET", home: "Canada", homeFlag: "🇨🇦", away: "Qatar", awayFlag: "🇶🇦", venue: "BC Place", city: "Vancouver", broadcast: "FS1" },
-  { stage: "Group Stage", group: "Group A", date: "Thu Jun 18", time: "9:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Korea", awayFlag: "🇰🇷", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group A", iso: "2026-06-18", date: "Thu Jun 18", time: "12:00 PM ET", home: "Czechia", homeFlag: "🇨🇿", away: "South Africa", awayFlag: "🇿🇦", venue: "Mercedes-Benz Stadium", city: "Atlanta", broadcast: "FOX" },
+  { stage: "Group Stage", group: "Group B", iso: "2026-06-18", date: "Thu Jun 18", time: "3:00 PM ET", home: "Switzerland", homeFlag: "🇨🇭", away: "Bosnia & Herzegovina", awayFlag: "🇧🇦", venue: "SoFi Stadium", city: "Los Angeles", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group B", iso: "2026-06-18", date: "Thu Jun 18", time: "6:00 PM ET", home: "Canada", homeFlag: "🇨🇦", away: "Qatar", awayFlag: "🇶🇦", venue: "BC Place", city: "Vancouver", broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group A", iso: "2026-06-18", date: "Thu Jun 18", time: "9:00 PM ET", home: "Mexico", homeFlag: "🇲🇽", away: "South Korea", awayFlag: "🇰🇷", venue: "Estadio Akron", city: "Guadalajara", broadcast: "FOX" },
 ];
 
 const KNOCKOUT_PLACEHOLDERS: { stage: Stage; window: string; note?: string; metlife?: boolean }[] = [
@@ -88,15 +92,29 @@ const STAGES: Stage[] = ["Group Stage", "Round of 32", "Round of 16", "Quarterfi
 
 function SchedulePage() {
   const [stage, setStage] = useState<Stage>("Group Stage");
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const id = setInterval(() => setNow(Date.now()), 30000);
+    return () => clearInterval(id);
+  }, []);
 
   const groupMatchesByDate = useMemo(() => {
+    const order: Record<MatchStatus, number> = { live: 0, upcoming: 1, ft: 2 };
     const map = new Map<string, Match[]>();
     MATCHES.forEach(m => {
       if (!map.has(m.date)) map.set(m.date, []);
       map.get(m.date)!.push(m);
     });
+    // sort each day: live → upcoming → ft
+    map.forEach(list => {
+      list.sort((a, b) => {
+        const sa = getMatchStatus(a.iso, a.time, now).status;
+        const sb = getMatchStatus(b.iso, b.time, now).status;
+        return order[sa] - order[sb];
+      });
+    });
     return Array.from(map.entries());
-  }, []);
+  }, [now]);
 
   return (
     <div style={{ background: WC_BG, minHeight: "100vh" }} className="text-white">
@@ -114,7 +132,6 @@ function SchedulePage() {
           </p>
         </header>
 
-        {/* Stage tabs */}
         <div className="flex flex-wrap justify-center gap-2 mb-12">
           {STAGES.map(s => {
             const active = s === stage;
@@ -145,7 +162,7 @@ function SchedulePage() {
                   <div className="flex-1 h-px" style={{ background: `linear-gradient(90deg, ${WC_GOLD}88, transparent)` }} />
                 </div>
                 <div className="grid gap-4 md:grid-cols-2">
-                  {matches.map((m, i) => <MatchCard key={i} m={m} />)}
+                  {matches.map((m, i) => <MatchCard key={i} m={m} now={now} />)}
                 </div>
               </section>
             ))}
@@ -171,14 +188,18 @@ function SchedulePage() {
   );
 }
 
-function MatchCard({ m }: { m: Match }) {
+function MatchCard({ m, now }: { m: Match; now: number }) {
+  const s = getMatchStatus(m.iso, m.time, now);
+  const isLive = s.status === "live";
+  const isFt = s.status === "ft";
   return (
     <article
-      className="rounded-xl overflow-hidden relative"
+      className={`rounded-xl overflow-hidden relative ${isLive ? "animate-pulse-glow" : ""}`}
       style={{
         background: WC_CARD,
-        border: m.metlife ? `2px solid ${WC_GOLD}` : `1px solid ${WC_GOLD}44`,
-        boxShadow: m.metlife ? `0 0 40px ${WC_GOLD}55` : `0 0 20px ${WC_GOLD}10`,
+        border: isLive || m.metlife ? `2px solid ${WC_GOLD}` : `1px solid ${WC_GOLD}44`,
+        boxShadow: isLive ? `0 0 50px ${WC_GOLD}80` : m.metlife ? `0 0 40px ${WC_GOLD}55` : `0 0 20px ${WC_GOLD}10`,
+        opacity: isFt ? 0.65 : 1,
       }}
     >
       {m.metlife && (
@@ -189,14 +210,18 @@ function MatchCard({ m }: { m: Match }) {
       )}
       <div className="flex items-center justify-between px-5 py-2.5 border-b" style={{ borderColor: `${WC_GOLD}33`, background: "rgba(0,0,0,0.3)" }}>
         <span className="text-[10px] uppercase tracking-[0.3em] font-bold" style={{ color: WC_GOLD }}>{m.group ?? m.stage}</span>
-        <span className="text-[11px] uppercase tracking-widest text-white/70">{m.time}</span>
+        <StatusBadge status={s.status} time={m.time} minutesPlayed={s.minutesPlayed} />
       </div>
       <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-5">
         <div className="text-right">
           <div className="text-3xl md:text-4xl">{m.homeFlag}</div>
           <p className="font-display tracking-wide mt-1.5 text-base md:text-lg font-bold">{m.home}</p>
         </div>
-        <div className="font-display text-lg text-white/40">VS</div>
+        <div className="font-display text-lg text-white/40">
+          {(isFt || isLive) && m.homeScore != null && m.awayScore != null
+            ? <span className="text-white">{m.homeScore}–{m.awayScore}</span>
+            : "VS"}
+        </div>
         <div className="text-left">
           <div className="text-3xl md:text-4xl">{m.awayFlag}</div>
           <p className="font-display tracking-wide mt-1.5 text-base md:text-lg font-bold">{m.tbd ? <span className="text-white/60">TBD</span> : m.away}</p>
