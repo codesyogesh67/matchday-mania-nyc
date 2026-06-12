@@ -92,6 +92,10 @@ function Hero() {
             style={{ border: `2px solid ${WC_GOLD}`, color: WC_GOLD, background: "transparent" }}>
             ⚽ Full Schedule
           </Link>
+          <Link to="/standings" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-xs md:text-sm text-white transition hover:bg-white hover:text-black"
+            style={{ border: `2px solid #ffffff`, background: "transparent" }}>
+            📊 Standings
+          </Link>
         </motion.div>
       </div>
     </section>
