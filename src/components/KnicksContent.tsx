@@ -57,11 +57,13 @@ const FEATURED_BARS: KnicksBar[] = ([
   return b.rating - a.rating;
 });
 
+const GOLD = "#FFD700";
+
 export function KnicksContent() {
   return (
-    <main className="bg-[#111111] text-white">
-      <SeriesBanner />
+    <main className="bg-[#0A0A0A] text-white">
       <KnicksHero />
+      <SeriesRecap />
       <Game4Recap />
       <Game5Section />
       <WatchInNYC />
@@ -71,34 +73,9 @@ export function KnicksContent() {
   );
 }
 
-function SeriesBanner() {
-  return (
-    <section className="relative overflow-hidden border-b border-white/10"
-      style={{ background: `linear-gradient(90deg, ${KNICKS_BLUE}, #111 50%, ${KNICKS_ORANGE})` }}>
-      <motion.div
-        animate={{ opacity: [0.6, 1, 0.6] }}
-        transition={{ duration: 2.5, repeat: Infinity }}
-        className="absolute inset-0 pointer-events-none"
-        style={{ boxShadow: `inset 0 0 80px ${KNICKS_ORANGE}80` }}
-      />
-      <div className="relative mx-auto max-w-7xl px-4 py-5 text-center">
-        <p className="font-display text-2xl md:text-4xl tracking-widest">
-          NEW YORK KNICKS — <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 20px ${KNICKS_ORANGE}` }}>NBA FINALS</span>
-        </p>
-        <p className="mt-2 font-bold uppercase tracking-[0.25em] text-sm md:text-base" style={{ color: KNICKS_ORANGE }}>
-          Knicks lead 3–1 · ONE WIN FROM THE CHAMPIONSHIP
-        </p>
-        <p className="mt-1 text-white/80 italic text-xs md:text-sm tracking-wider">
-          "Down 29. Never counted out. The city never sleeps."
-        </p>
-      </div>
-    </section>
-  );
-}
-
 function Countdown() {
-  // Saturday June 14, 8:30 PM EDT (EDT = UTC-4) → 2026-06-15T00:30:00Z
-  const target = new Date("2026-06-15T00:30:00Z").getTime();
+  // Game 5: June 13, 2026 at 8:30 PM EDT (UTC-4) → 2026-06-14T00:30:00Z
+  const target = new Date("2026-06-14T00:30:00Z").getTime();
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -109,135 +86,242 @@ function Countdown() {
   const m = Math.floor((diff % 3600000) / 60000);
   const s = Math.floor((diff % 60000) / 1000);
   const Box = ({ n, l }: { n: number; l: string }) => (
-    <div className="flex flex-col items-center min-w-[80px] md:min-w-[110px] rounded-lg border border-white/10 bg-black/60 backdrop-blur px-4 py-3"
-      style={{ boxShadow: `0 0 24px ${KNICKS_ORANGE}40` }}>
-      <span className="font-display text-4xl md:text-6xl tabular-nums" style={{ color: KNICKS_ORANGE, textShadow: `0 0 20px ${KNICKS_ORANGE}` }}>
+    <div
+      className="flex flex-col items-center min-w-[88px] md:min-w-[120px] rounded-xl border-2 px-4 py-3 bg-black/80"
+      style={{ borderColor: KNICKS_ORANGE, boxShadow: `0 0 24px ${KNICKS_ORANGE}55` }}
+    >
+      <span
+        key={n}
+        className="font-display text-5xl md:text-7xl tabular-nums animate-fade-in"
+        style={{ color: KNICKS_ORANGE, textShadow: `0 0 24px ${KNICKS_ORANGE}` }}
+      >
         {String(n).padStart(2, "0")}
       </span>
       <span className="text-[10px] md:text-xs uppercase tracking-widest text-white/60 mt-1">{l}</span>
     </div>
   );
   return (
-    <div className="flex gap-3 md:gap-4 justify-center">
+    <div className="flex flex-wrap gap-3 md:gap-4 justify-center max-w-sm md:max-w-none mx-auto">
       <Box n={h} l="Hours" />
-      <Box n={m} l="Min" />
-      <Box n={s} l="Sec" />
-    </div>
-  );
-}
-
-function HeroSlideshow() {
-  const [idx, setIdx] = useState(0);
-  useEffect(() => {
-    const id = setInterval(() => setIdx(i => (i + 1) % HERO_IMAGES.length), 5000);
-    return () => clearInterval(id);
-  }, []);
-  return (
-    <div className="absolute inset-0">
-      {HERO_IMAGES.map((src, i) => (
-        <div
-          key={src}
-          className="absolute inset-0 transition-opacity duration-1000"
-          style={{
-            opacity: i === idx ? 1 : 0,
-            backgroundImage: `url(${src})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        />
-      ))}
-      <div className="absolute inset-0 bg-black/60" />
+      <Box n={m} l="Minutes" />
+      <Box n={s} l="Seconds" />
     </div>
   );
 }
 
 function KnicksHero() {
   return (
-    <section className="relative overflow-hidden">
-      <HeroSlideshow />
-      {/* Animated gradient overlay */}
-      <div aria-hidden className="absolute inset-0 opacity-40"
-        style={{
-          background: `radial-gradient(circle at 20% 20%, ${KNICKS_BLUE}80, transparent 50%), radial-gradient(circle at 80% 80%, ${KNICKS_ORANGE}60, transparent 50%)`,
+    <section className="relative overflow-hidden bg-[#0A0A0A]">
+      {/* Animated particle / smoke gradient */}
+      <div aria-hidden className="absolute inset-0">
+        <motion.div
+          animate={{ opacity: [0.4, 0.9, 0.4] }}
+          transition={{ duration: 4, repeat: Infinity }}
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(circle at 20% 30%, ${KNICKS_ORANGE}55, transparent 55%), radial-gradient(circle at 80% 70%, ${KNICKS_BLUE}55, transparent 55%)`,
+          }}
+        />
+        <motion.div
+          animate={{ opacity: [0.6, 0.2, 0.6] }}
+          transition={{ duration: 5, repeat: Infinity }}
+          className="absolute inset-0"
+          style={{
+            background: `radial-gradient(circle at 70% 20%, ${KNICKS_ORANGE}40, transparent 50%), radial-gradient(circle at 30% 90%, ${KNICKS_BLUE}40, transparent 50%)`,
+          }}
+        />
+        <div className="absolute inset-0" style={{
+          backgroundImage: "url(\"data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/></svg>\")",
+          opacity: 0.07,
+          mixBlendMode: "overlay",
         }} />
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-48 h-[120%] blur-3xl animate-beam"
-          style={{ background: `linear-gradient(to bottom, ${KNICKS_BLUE}50, transparent)` }} />
-        <div className="absolute top-0 left-2/3 w-48 h-[120%] blur-3xl animate-beam"
-          style={{ background: `linear-gradient(to bottom, ${KNICKS_ORANGE}50, transparent)`, animationDelay: "3s" }} />
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute top-0 left-1/4 w-48 h-[120%] blur-3xl animate-beam"
+            style={{ background: `linear-gradient(to bottom, ${KNICKS_BLUE}50, transparent)` }} />
+          <div className="absolute top-0 left-2/3 w-48 h-[120%] blur-3xl animate-beam"
+            style={{ background: `linear-gradient(to bottom, ${KNICKS_ORANGE}50, transparent)`, animationDelay: "3s" }} />
+        </div>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 pt-12 pb-20 md:pt-20 md:pb-28 text-center">
+      <div className="relative mx-auto max-w-7xl px-4 pt-10 pb-16 md:pt-16 md:pb-24 text-center">
+        {/* Series Badge */}
         <motion.div
           initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-xs uppercase tracking-[0.3em]"
-          style={{ borderColor: KNICKS_ORANGE, color: KNICKS_ORANGE, background: `${KNICKS_ORANGE}10` }}>
-          <span className="relative flex h-2 w-2">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-75" style={{ background: KNICKS_ORANGE }} />
-            <span className="relative inline-flex h-2 w-2 rounded-full" style={{ background: KNICKS_ORANGE }} />
-          </span>
-          One Win Away
+          className="inline-flex items-center gap-2 rounded-full border-2 px-5 py-2 text-xs md:text-sm uppercase tracking-[0.25em] font-bold relative overflow-hidden"
+          style={{ borderColor: GOLD, color: GOLD, background: "rgba(255,215,0,0.08)" }}
+        >
+          <span className="relative z-10">🏆 NBA Finals 2026 — Knicks vs Spurs</span>
+          <motion.span
+            aria-hidden
+            className="absolute inset-y-0 -left-1/2 w-1/2"
+            style={{ background: "linear-gradient(90deg, transparent, rgba(255,215,0,0.45), transparent)" }}
+            animate={{ x: ["0%", "400%"] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "linear" }}
+          />
         </motion.div>
 
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-          className="font-display mt-6 text-[12vw] md:text-[7.5rem] leading-[0.85] tracking-tight"
+        {/* Series Score */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.1 }}
+          className="mt-8 flex items-end justify-center gap-4 md:gap-8 font-display leading-none"
         >
-          GREATEST COMEBACK
+          <div className="flex flex-col items-center">
+            <span className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/70 mb-2">NYK</span>
+            <motion.span
+              animate={{ textShadow: [`0 0 30px ${KNICKS_ORANGE}90`, `0 0 60px ${KNICKS_ORANGE}`, `0 0 30px ${KNICKS_ORANGE}90`], scale: [1, 1.04, 1] }}
+              transition={{ duration: 2, repeat: Infinity }}
+              className="text-[10rem] md:text-[14rem] tabular-nums"
+              style={{ color: KNICKS_ORANGE }}
+            >3</motion.span>
+          </div>
+          <span className="text-6xl md:text-8xl text-white/30 pb-4">—</span>
+          <div className="flex flex-col items-center">
+            <span className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/50 mb-2">SAS</span>
+            <span className="text-[7rem] md:text-[10rem] tabular-nums text-white/40">1</span>
+          </div>
+        </motion.div>
+        <p className="mt-2 font-bold uppercase tracking-[0.3em] text-xs md:text-sm" style={{ color: KNICKS_ORANGE }}>
+          New York Knicks lead the series
+        </p>
+
+        {/* Headline */}
+        <motion.h1
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}
+          className="font-display mt-10 text-[14vw] md:text-[8rem] leading-[0.85] tracking-tight"
+          style={{ textShadow: `0 0 40px ${KNICKS_ORANGE}55` }}
+        >
+          ONE WIN AWAY.
           <br />
-          <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 40px ${KNICKS_ORANGE}90` }}>IN FINALS HISTORY?</span> 🗽
+          <span style={{ color: KNICKS_ORANGE, textShadow: `0 0 50px ${KNICKS_ORANGE}` }}>CLOSE IT OUT TONIGHT.</span>
         </motion.h1>
 
         <motion.p
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }}
-          className="mt-5 font-display text-xl md:text-3xl tracking-[0.2em] text-white/90"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.4 }}
+          className="mt-5 text-base md:text-xl font-medium text-white tracking-wide"
         >
-          NBA FINALS · GAME 5 · <span style={{ color: KNICKS_BLUE, textShadow: `0 0 20px ${KNICKS_BLUE}` }}>NEW YORK KNICKS</span> @ SPURS
+          Game 5 · San Antonio · Tonight · <span className="font-bold" style={{ color: KNICKS_ORANGE }}>8:30 PM ET</span>
         </motion.p>
 
+        {/* Countdown */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-          className="mt-8 flex flex-wrap items-center justify-center gap-3"
-        >
-          <div className="rounded-lg border border-white/15 bg-black/60 px-5 py-3 font-display text-2xl tracking-widest">
-            <span style={{ color: KNICKS_ORANGE }}>NYK 3</span>
-            <span className="mx-2 text-white/40">–</span>
-            <span className="text-white/70">SAS 1</span>
-          </div>
-          <div className="rounded-lg border border-white/15 bg-black/60 px-5 py-3 text-sm">
-            <span className="uppercase tracking-widest text-white/60 mr-2">Win Prob</span>
-            <span style={{ color: KNICKS_ORANGE }} className="font-bold">Knicks 54.7%</span>
-            <span className="mx-2 text-white/40">|</span>
-            <span className="text-white/70">Spurs 45.3%</span>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.55 }}
+          initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}
           className="mt-10"
         >
-          <p className="text-xs uppercase tracking-[0.3em] text-white/60 mb-3">Game 5 Tipoff in</p>
+          <p className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/70 mb-4">⏳ Game 5 Tipoff In</p>
           <Countdown />
         </motion.div>
 
+        {/* CTA */}
         <motion.div
-          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.7 }}
-          className="mt-10 flex flex-wrap items-center justify-center gap-3"
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.65 }}
+          className="mt-10 px-2"
         >
-          <a href="#watch" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
-            style={{ background: KNICKS_ORANGE, boxShadow: `0 0 30px ${KNICKS_ORANGE}80` }}>
-            🍺 Find a Watch Party
-          </a>
-          <a href="#recap" className="rounded-md px-6 py-3 font-bold uppercase tracking-widest text-sm text-white"
-            style={{ background: KNICKS_BLUE, boxShadow: `0 0 30px ${KNICKS_BLUE}80` }}>
-            🔥 Game 4 Recap
-          </a>
-          <a href="#game5" className="rounded-md border px-6 py-3 font-bold uppercase tracking-widest text-sm text-white/90 hover:bg-white/5"
-            style={{ borderColor: "rgba(255,255,255,0.25)" }}>
-            🏆 Game 5 Info
-          </a>
+          <motion.a
+            href="#watch"
+            animate={{ boxShadow: [`0 0 20px ${KNICKS_ORANGE}80`, `0 0 50px ${KNICKS_ORANGE}`, `0 0 20px ${KNICKS_ORANGE}80`] }}
+            transition={{ duration: 2, repeat: Infinity }}
+            className="inline-block w-full md:w-auto rounded-lg px-8 py-4 font-display text-xl md:text-2xl tracking-widest text-white"
+            style={{ background: `linear-gradient(90deg, ${KNICKS_ORANGE}, #ff9d4d, ${KNICKS_ORANGE})` }}
+          >
+            🔥 GET READY — IT'S CHAMPIONSHIP TIME
+          </motion.a>
+        </motion.div>
+
+        {/* Win Probability Bar */}
+        <motion.div
+          initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.8 }}
+          className="mt-10 max-w-2xl mx-auto"
+        >
+          <div className="flex justify-between text-xs uppercase tracking-widest mb-2">
+            <span className="text-white/70">SAS 64%</span>
+            <span style={{ color: KNICKS_ORANGE }}>NYK 36%</span>
+          </div>
+          <div className="h-3 w-full rounded-full overflow-hidden flex border border-white/10">
+            <div className="h-full" style={{ width: "64%", background: "#555" }} />
+            <div className="h-full" style={{ width: "36%", background: KNICKS_ORANGE }} />
+          </div>
+          <p className="mt-3 text-xs md:text-sm italic text-white/60">
+            Vegas favors SA on the road... but this team doesn't care.
+          </p>
         </motion.div>
       </div>
+    </section>
+  );
+}
+
+type GameRecap = {
+  num: number; us: number; them: number; won: boolean; loc: string; date: string; blurb: string;
+};
+const SERIES: GameRecap[] = [
+  { num: 1, us: 105, them: 95, won: true, loc: "San Antonio", date: "Wed Jun 3", blurb: "The Knicks stunned the Spurs on their home floor to open the Finals. A balanced attack and stifling defense set the tone for the series." },
+  { num: 2, us: 105, them: 104, won: true, loc: "San Antonio", date: "Fri Jun 5", blurb: "One point. That's all that separated the Knicks from giving SA a split. New York held on in the final seconds to go up 2-0 heading back to MSG." },
+  { num: 3, us: 111, them: 115, won: false, loc: "New York (MSG)", date: "Mon Jun 8", blurb: "San Antonio fought back on the Garden floor, stealing one to avoid the sweep. The Spurs kept their hopes alive in a gritty, physical game." },
+  { num: 4, us: 107, them: 106, won: true, loc: "New York (MSG)", date: "Wed Jun 10", blurb: "The Knicks reclaimed control with a clutch Game 4 win at MSG. New York now holds a 3-1 series lead and can close out the championship TONIGHT in San Antonio." },
+];
+
+function SeriesRecap() {
+  const [active, setActive] = useState(4);
+  const game = SERIES.find(g => g.num === active)!;
+  return (
+    <section className="mx-auto max-w-5xl px-4 py-16 md:py-20">
+      <h2 className="font-display text-3xl md:text-5xl tracking-wide text-center">
+        📋 HOW WE GOT HERE — <span style={{ color: KNICKS_ORANGE }}>SERIES RECAP</span>
+      </h2>
+      <div className="mt-8 flex flex-wrap justify-center gap-2 border-b border-white/10">
+        {SERIES.map(g => {
+          const isActive = g.num === active;
+          return (
+            <button
+              key={g.num}
+              onClick={() => setActive(g.num)}
+              className="relative px-5 py-3 font-display text-lg md:text-xl tracking-widest uppercase transition-colors"
+              style={{ color: isActive ? KNICKS_ORANGE : "rgba(255,255,255,0.6)" }}
+            >
+              Game {g.num}
+              {isActive && (
+                <motion.span
+                  layoutId="recap-underline"
+                  className="absolute left-0 right-0 -bottom-px h-1 rounded-full"
+                  style={{ background: KNICKS_ORANGE, boxShadow: `0 0 16px ${KNICKS_ORANGE}` }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      <motion.div
+        key={game.num}
+        initial={{ opacity: 0, x: 20 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.3 }}
+        className="mt-8 rounded-xl border-2 p-6 md:p-10 bg-black/60"
+        style={{ borderColor: game.won ? KNICKS_ORANGE : "#444" }}
+      >
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div>
+            <p className="text-xs md:text-sm uppercase tracking-[0.3em] text-white/60">
+              {game.loc} · {game.date}
+            </p>
+            <p className="mt-2 font-display text-4xl md:text-6xl tabular-nums">
+              <span style={{ color: game.won ? "#22c55e" : "#ef4444" }}>NYK {game.us}</span>
+              <span className="text-white/40 mx-3">·</span>
+              <span style={{ color: game.won ? "#ef4444" : "#22c55e" }}>SAS {game.them}</span>
+            </p>
+          </div>
+          <span
+            className="px-4 py-2 rounded-full font-bold text-sm uppercase tracking-widest"
+            style={{
+              background: game.won ? `${KNICKS_ORANGE}25` : "#ef444425",
+              color: game.won ? KNICKS_ORANGE : "#ef4444",
+              border: `2px solid ${game.won ? KNICKS_ORANGE : "#ef4444"}`,
+            }}
+          >
+            {game.won ? "✅ Knicks Win" : "❌ Spurs Win"}
+          </span>
+        </div>
+        <p className="mt-6 text-base md:text-lg text-white/85 leading-relaxed">{game.blurb}</p>
+      </motion.div>
     </section>
   );
 }
