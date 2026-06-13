@@ -32,13 +32,19 @@ const empty = (name: string, flag: string): TeamStanding => ({
 });
 
 const GROUPS: Record<GroupKey, TeamStanding[]> = {
-  A: [
-    { name: "Mexico", flag: "🇲🇽", p: 1, w: 1, d: 0, l: 0, gf: 2, ga: 0, status: "CONT" },
-    empty("South Korea", "🇰🇷"),
-    empty("Czechia", "🇨🇿"),
+ A: [
+    { name: "Mexico",       flag: "🇲🇽", p: 1, w: 1, d: 0, l: 0, gf: 2, ga: 0, status: "CONT" },
+    { name: "South Korea",  flag: "🇰🇷", p: 1, w: 1, d: 0, l: 0, gf: 2, ga: 1, status: "CONT" },
+    { name: "Czechia",      flag: "🇨🇿", p: 1, w: 0, d: 0, l: 1, gf: 1, ga: 2, status: "CONT" },
     { name: "South Africa", flag: "🇿🇦", p: 1, w: 0, d: 0, l: 1, gf: 0, ga: 2, status: "CONT" },
   ],
-  B: [empty("Canada", "🇨🇦"), empty("Bosnia & Herzegovina", "🇧🇦"), empty("Qatar", "🇶🇦"), empty("Switzerland", "🇨🇭")],
+  // ── Group B — played: Jun 12 (Canada 1-1 Bosnia & Herzegovina) ───────────────────
+  B: [
+    { name: "Canada",               flag: "🇨🇦", p: 1, w: 0, d: 1, l: 0, gf: 1, ga: 1, status: "CONT" },
+    { name: "Bosnia & Herzegovina", flag: "🇧🇦", p: 1, w: 0, d: 1, l: 0, gf: 1, ga: 1, status: "CONT" },
+    empty("Switzerland", "🇨🇭"),
+    empty("Qatar",        "🇶🇦"),
+  ],
   C: [empty("Wales", "🏴󠁧󠁢󠁷󠁬󠁳󠁿"), empty("Saudi Arabia", "🇸🇦"), empty("Brazil", "🇧🇷"), empty("Cameroon", "🇨🇲")],
   D: [empty("USA", "🇺🇸"), empty("Paraguay", "🇵🇾"), empty("Australia", "🇦🇺"), empty("Turkey", "🇹🇷")],
   E: [empty("Germany", "🇩🇪"), empty("Curaçao", "🇨🇼"), empty("Ivory Coast", "🇨🇮"), empty("Ecuador", "🇪🇨")],
