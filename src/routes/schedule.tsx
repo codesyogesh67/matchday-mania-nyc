@@ -47,11 +47,11 @@ export type Match = {
 export const MATCHES: Match[] = [
   // ── June 11 ──────────────────────────────────────────────────────────────
   { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "3:00 PM ET",  home: "Mexico",      homeFlag: "🇲🇽", away: "South Africa", awayFlag: "🇿🇦", venue: "Estadio Azteca",          city: "Mexico City",       broadcast: "FOX / Tubi", homeScore: 2, awayScore: 0 },
-  { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "10:00 PM ET", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia",      awayFlag: "🇨🇿", venue: "Estadio Akron",           city: "Zapopan",           broadcast: "FS1" },
+  { stage: "Group Stage", group: "Group A", iso: "2026-06-11", date: "Thu Jun 11", time: "10:00 PM ET", home: "South Korea", homeFlag: "🇰🇷", away: "Czechia",      awayFlag: "🇨🇿", venue: "Estadio Akron",           city: "Zapopan",           broadcast: "FS1",homeScore: 2, awayScore: 1 },
 
   // ── June 12 ──────────────────────────────────────────────────────────────
-  { stage: "Group Stage", group: "Group B", iso: "2026-06-12", date: "Fri Jun 12", time: "3:00 PM ET",  home: "Canada",      homeFlag: "🇨🇦", away: "Bosnia & Herzegovina", awayFlag: "🇧🇦", venue: "BMO Field",    city: "Toronto",           broadcast: "FOX" },
-  { stage: "Group Stage", group: "Group D", iso: "2026-06-12", date: "Fri Jun 12", time: "9:00 PM ET",  home: "USA",         homeFlag: "🇺🇸", away: "Paraguay",     awayFlag: "🇵🇾", venue: "SoFi Stadium",            city: "Inglewood, CA",     broadcast: "FOX / Tubi" },
+  { stage: "Group Stage", group: "Group B", iso: "2026-06-12", date: "Fri Jun 12", time: "3:00 PM ET",  home: "Canada",      homeFlag: "🇨🇦", away: "Bosnia & Herzegovina", awayFlag: "🇧🇦", venue: "BMO Field",    city: "Toronto",           broadcast: "FOX",homeScore: 1, awayScore: 1 },
+  { stage: "Group Stage", group: "Group D", iso: "2026-06-12", date: "Fri Jun 12", time: "9:00 PM ET",  home: "USA",         homeFlag: "🇺🇸", away: "Paraguay",     awayFlag: "🇵🇾", venue: "SoFi Stadium",            city: "Inglewood, CA",     broadcast: "FOX / Tubi",homeScore: 4, awayScore: 1 },
 
   // ── June 13 ──────────────────────────────────────────────────────────────
   { stage: "Group Stage", group: "Group B", iso: "2026-06-13", date: "Sat Jun 13", time: "3:00 PM ET",  home: "Qatar",       homeFlag: "🇶🇦", away: "Switzerland",  awayFlag: "🇨🇭", venue: "Levi's Stadium",          city: "Santa Clara, CA",   broadcast: "FOX" },
